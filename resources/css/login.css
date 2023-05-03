@@ -1,0 +1,86 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+.Form {
+    background-color: white;
+    margin-left: 2%;
+    height: 500px;
+    width: 100%;
+    max-width: 500px;
+    padding: 25px;
+    border-radius: 5px;
+}
+
+body {
+    background-color: #fbf5f3;
+}
+
+h2 {
+    color: black;
+}
+
+.Divisor {
+    margin-top: 5%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 5%;
+    padding-right: 5%;
+    height: 100%;
+}
+
+h5 {
+    color: #555;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+h5 > span {
+    color: #de3c4b;
+    cursor: pointer
+}
+
+label {
+    font-size: 17px;
+    color: black;
+    margin-top: 10px;
+}
+
+input {
+    margin-top: 14px;
+    width: 90%;
+    border: 1px solid #ccc;
+    font-size: 15px;
+    color: #555;
+    padding: 4px;
+}
+
+a {
+    text-decoration: none;
+}
+
+.CenteredContainer {
+    width: 90%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-left: 0px;
+}
+
+button {
+    background-color: #de3c4b !important;
+    color: white;
+    margin-left: 0px;
+    padding: 8px;
+    border-radius: 8px;
+    width: 70%;
+    font-size: 16px;
+    margin-top: 30px;
+}

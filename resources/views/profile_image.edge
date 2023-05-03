@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atualize sua imagem de perfil</title>
+    <link rel="stylesheet" type="text/css" href="http://localhost:8080/assets/profile_image.css"> 
+</head>
+<body>
+    @include('partials/header')
+    <div>
+        <div class="dropzone" id="dropzone">
+            <img class="dropzone-icon" src="/images/drop.png" />
+            
+            Solte sua imagem de perfil aqui ou 
+            <input hidden type="file" name="files" class="dropzone-input" />
+            <p>
+                <button type="submit">Continuar sem uma imagem de perfil</button>
+            </p>
+        </div>
+    </div>
+</body>
+<script src="http://localhost:8080/assets/drop.js"></script>
+</html>

@@ -1,0 +1,11 @@
+{
+  "assets/app.css": "http://localhost:8080/assets/app.css",
+  "assets/app.js": "http://localhost:8080/assets/app.js",
+  "assets/login.css": "http://localhost:8080/assets/login.css",
+  "assets/login.js": "http://localhost:8080/assets/login.js",
+  "assets/signup.css": "http://localhost:8080/assets/signup.css",
+  "assets/signup.js": "http://localhost:8080/assets/signup.js",
+  "assets/profile_image.css": "http://localhost:8080/assets/profile_image.css",
+  "assets/profile_image.js": "http://localhost:8080/assets/profile_image.js",
+  "assets/drop.js": "http://localhost:8080/assets/drop.js"
+}

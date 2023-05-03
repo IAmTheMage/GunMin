@@ -1,0 +1,9 @@
+header {
+    background-color: white;
+    padding: 10px;
+    height: 60px;
+}
+
+header > h1 {
+    margin-left: 5%;
+}

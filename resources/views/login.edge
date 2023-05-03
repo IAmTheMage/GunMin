@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faça seu login</title>
+    <link rel="stylesheet" type="text/css" href="http://localhost:8080/assets/login.css"> 
+</head>
+<body class="text-3xl font-bold">
+    @include('partials/header')
+    <div class="Divisor">
+        <div class="Form">
+            <h2>Login</h2>
+            <h5>Doesn't have an account yet? <span><a href="http://127.0.0.1:3333/users/signup">Sign-up</a></span></h5>
+            <label>Email</label>
+            <input placeholder="Email" name="email">
+            <label>Password</label>
+            <input type="password" placeholder="Password" name="password">
+            <div class="CenteredContainer">
+                <button>Logar</button>
+            </div>
+        </div>
+        <lottie-player src="/animations/login.json" background="transparent"  speed="1"  style="width: 70%; height: 100%;" loop autoplay></lottie-player>
+    </div>
+</body>
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+</html>

@@ -1,0 +1,41 @@
+{
+  "entrypoints": {
+    "app": {
+      "css": [
+        "http://localhost:8080/assets/app.css"
+      ],
+      "js": [
+        "http://localhost:8080/assets/app.js"
+      ]
+    },
+    "login": {
+      "css": [
+        "http://localhost:8080/assets/login.css"
+      ],
+      "js": [
+        "http://localhost:8080/assets/login.js"
+      ]
+    },
+    "signup": {
+      "css": [
+        "http://localhost:8080/assets/signup.css"
+      ],
+      "js": [
+        "http://localhost:8080/assets/signup.js"
+      ]
+    },
+    "profile_image": {
+      "css": [
+        "http://localhost:8080/assets/profile_image.css"
+      ],
+      "js": [
+        "http://localhost:8080/assets/profile_image.js"
+      ]
+    },
+    "drop": {
+      "js": [
+        "http://localhost:8080/assets/drop.js"
+      ]
+    }
+  }
+}
