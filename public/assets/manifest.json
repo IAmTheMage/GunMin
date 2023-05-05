@@ -7,5 +7,7 @@
   "assets/signup.js": "http://localhost:8080/assets/signup.js",
   "assets/profile_image.css": "http://localhost:8080/assets/profile_image.css",
   "assets/profile_image.js": "http://localhost:8080/assets/profile_image.js",
-  "assets/drop.js": "http://localhost:8080/assets/drop.js"
+  "assets/drop.js": "http://localhost:8080/assets/drop.js",
+  "assets/publish_game.css": "http://localhost:8080/assets/publish_game.css",
+  "assets/publish_game.js": "http://localhost:8080/assets/publish_game.js"
 }

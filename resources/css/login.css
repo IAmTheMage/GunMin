@@ -7,21 +7,26 @@
 
 
 .Form {
-    background-color: white;
+    
+    background-color: #1f2324;
     margin-left: 2%;
     height: 500px;
     width: 100%;
     max-width: 500px;
     padding: 25px;
     border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 body {
-    background-color: #fbf5f3;
+    
+    background-color: #2A2F30;
 }
 
 h2 {
-    color: black;
+    color: white;
 }
 
 .Divisor {
@@ -36,28 +41,32 @@ h2 {
 }
 
 h5 {
-    color: #555;
+    color: white !important;
     font-size: 14px;
     margin-top: 5px;
 }
 
+label {
+    color: white;
+}
+
 h5 > span {
-    color: #de3c4b;
+    color: #fd2e7c;
     cursor: pointer
 }
 
 label {
     font-size: 17px;
-    color: black;
     margin-top: 10px;
 }
 
 input {
     margin-top: 14px;
     width: 90%;
-    border: 1px solid #ccc;
+    border: 1px solid #1a1d1e;
     font-size: 15px;
-    color: #555;
+    color: white;
+    background-color: #1a1d1e;
     padding: 4px;
 }
 
@@ -75,7 +84,7 @@ a {
 }
 
 button {
-    background-color: #de3c4b !important;
+    background-color: #fd2e7c !important;
     color: white;
     margin-left: 0px;
     padding: 8px;
@@ -83,4 +92,12 @@ button {
     width: 70%;
     font-size: 16px;
     margin-top: 30px;
+}
+
+.FormData {
+    margin-left: 5%;
+}
+
+.LoginText {
+    color: white !important;
 }

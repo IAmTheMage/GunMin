@@ -36,6 +36,14 @@
       "js": [
         "http://localhost:8080/assets/drop.js"
       ]
+    },
+    "publish_game": {
+      "css": [
+        "http://localhost:8080/assets/publish_game.css"
+      ],
+      "js": [
+        "http://localhost:8080/assets/publish_game.js"
+      ]
     }
   }
 }

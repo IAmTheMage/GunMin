@@ -1,0 +1,87 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #25292a;
+}
+
+#Container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.StartContainer {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.FormTitle {
+    color: white;
+    font-size: 25px;
+}
+
+.StartContainer > form {
+    background-color: #1f2324;
+    width: 100%;
+    padding: 25px;
+    border-radius: 5px;
+}
+
+.Column {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+label {
+    color: white;
+    font-size: 17px;
+    margin-top: 10px;
+}
+
+input {
+    margin-top: 3px;
+    width: 100%;
+    border: 1px solid #1a1d1e;
+    font-size: 15px;
+    color: white;
+    background-color: #1a1d1e;
+    padding: 4px;
+}
+
+.select {
+    width: 100%;
+    min-width: 15ch;
+    max-width: 30ch;
+    border: 1px solid #1a1d1e;
+    border-radius: 0.25em;
+    padding: 0.25em 0.5em;
+    font-size: 1.25rem;
+    cursor: pointer;
+    line-height: 1.1;
+    background-color: #1a1d1e;
+}
+
+select {
+    appearance: none;
+    background-color: transparent;
+    border: none;
+    padding: 0 1em 0 0;
+    margin: 0;
+    width: 100%;
+    font-family: inherit;
+    font-size: inherit;
+    cursor: inherit;
+    line-height: inherit;
+    color: white;
+}
+
+select > option {
+    background-color: #1a1d1e;
+}

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Publique seu jogo</title>
+    <link rel="stylesheet" type="text/css" href="http://localhost:8080/assets/publish_game.css"> 
+</head>
+<body>
+    @include('partials/header')
+    <div id="Container">
+        <div class="StartContainer">
+            <form>
+                <h2 class="FormTitle">Publique seu jogo</h2>
+                <div class="Row">
+                    <div class="Column">
+                        <label>Nome</label>
+                        <input disabled type="text">
+                    </div>
+
+                    <div class="Column">
+                        <label>Email</label>
+                        <input disabled type="text">
+                    </div>
+
+                    <div class="Column">
+                        <label>Username</label>
+                        <input disabled type="text">
+                    </div>
+                </div>
+                <div class="Row">
+                    <div class="Column">
+                        <label>Nome do jogo</label>
+                        <input disabled type="text">
+                    </div>
+
+                    <div class="Column">
+                        <label>Idade recomendada</label>
+                        <div class="select">
+                            <select>
+                                <option>Livre</option>
+                                <option>7 anos</option>
+                                <option>12 anos</option>
+                                <option>14 anos</option>
+                                <option>16 anos</option>
+                                <option>18 anos</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="Column">
+                        <label>Tipo</label>
+                        <<input disabled type="text">>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
