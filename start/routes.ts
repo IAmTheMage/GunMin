@@ -20,6 +20,13 @@
 
 import Route from '@ioc:Adonis/Core/Route'
 
+import Bull from '@ioc:Rocketseat/Bull'
+import Job from 'App/Jobs/RegisterGenre'
+
+Bull.add(new Job().key, {
+  
+})
+
 Route.get('/', async ({ view, response }) => {
   return response.redirect('/users/login')
 })
@@ -37,6 +44,7 @@ Route.group(() => {
   Route.post('/users/profile_image/upload', 'ProfileImagesController.upload')
   Route.get('/homepage', 'HomePagesController.index')
   Route.get('/users/publish_game', 'GamesController.index')
+  Route.post('/games/publish_game', 'GamesController.publish')
 }).middleware(['auth'])
 
 Route.get("/users/logout", "UsersController.logout")

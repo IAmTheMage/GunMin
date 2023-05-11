@@ -11,7 +11,7 @@
     @include('partials/header')
     <div id="Container">
         <div class="StartContainer">
-            <form>
+            <div class="Form">
                 <h2 class="FormTitle">Publique seu jogo</h2>
                 <div class="Row">
                     <div class="Column">
@@ -51,11 +51,29 @@
 
                     <div class="Column">
                         <label>Tipo</label>
-                        <<input disabled type="text">>
+                        <div class="select">
+                            <select>
+                                @each(genre in genres)
+                                <option value="{{genre.id}}">{{genre.name}}</option>
+                                @end
+                            </select>
+                        </div>
                     </div>
                 </div>
-            </form>
+                <div id="dropzone" class="dropzone" id="dropzone" action="/users/profile_image/upload" method="post">
+                    <i class="fa-solid fa-upload fa-2xl"></i>
+                    
+                    <span>Coloque o zip contendo os arquivos do seu jogo aqui</span>
+                    <input id="profile_image" hidden type="file" name="profile_image" class="dropzone-input" />
+                </div>
+                <div class="CenteredContainer">
+                    <button id="submitButton" class="submit">Continuar</button>
+                </div>
+            </div>
         </div>
     </div>
+    @include('partials/footer')
 </body>
+<script src="https://kit.fontawesome.com/91248aca6a.js" crossorigin="anonymous"></script>
+<script src="http://localhost:8080/assets/submit_game.js"></script>
 </html>

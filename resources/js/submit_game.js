@@ -1,3 +1,4 @@
+const submitButton_ = document.getElementById('submitButton');
 var dropzone = document.getElementById('dropzone');
 var dropzone_input = dropzone.querySelector('.dropzone-input');
 var multiple = dropzone_input.getAttribute('multiple') ? true : false;
@@ -29,14 +30,7 @@ dropzone.addEventListener('drop', function(e) {
   var dataTransfer = new DataTransfer();
   
   const uploaded_file = files[0]
-  if(uploaded_file.type.match('image.*')) {
-    global_uploaded_file = uploaded_file
-    const url = URL.createObjectURL(uploaded_file)
-    const dropzone_icon = document.querySelector('.dropzone-icon')
-    dropzone_icon.src = url;
-    dropzone_icon.style.borderRadius = '100px';
-    
-  }
+  global_uploaded_file = uploaded_file
   const submitButton_ = document.getElementById('submitButton');
   submitButton_.style.display = "flex";
   submitButton_.style.width = "20%";
@@ -46,3 +40,16 @@ dropzone.addEventListener('click', function(e) {
   dropzone_input.click();
 });
 
+
+
+submitButton_.addEventListener('click', async (e) => {
+    e.preventDefault()
+    const form = new FormData()
+    console.log(global_uploaded_file)
+    form.append("game", global_uploaded_file)
+    await axios.post('/games/publish_game', form, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+    })
+})
