@@ -4,7 +4,11 @@ import User from 'App/Models/User';
 
 export default class UsersController {
     public async index(ctx: HttpContextContract) {
-        const { view } = ctx;
+        const { view, auth, response } = ctx;
+        const isAuth = await auth.check();
+        if(isAuth) {
+            return response.redirect('/users/profile_image')
+        }
         return view.render("login")
     }
 
@@ -41,7 +45,20 @@ export default class UsersController {
         return user
     }
 
+    public async login(ctx: HttpContextContract) {
+        const { request, auth } = ctx;
+        const data = request.body();
+        await auth.attempt(data.email, data.password);
+        return ctx.response.redirect("/users/profile_image")
+    }
+
     public async profile_image(ctx: HttpContextContract) {
         return ctx.view.render('profile_image')
+    }
+
+    public async logout(ctx: HttpContextContract) {
+        const { auth, view } = ctx;
+        await auth.logout();
+        return view.render("login")
     }
 }

@@ -36,6 +36,24 @@
       "js": [
         "http://localhost:8080/assets/drop.js"
       ]
+    },
+    "publish_game": {
+      "css": [
+        "http://localhost:8080/assets/publish_game.css"
+      ],
+      "js": [
+        "http://localhost:8080/assets/publish_game.js"
+      ]
+    },
+    "submitProfileImage": {
+      "js": [
+        "http://localhost:8080/assets/submitProfileImage.js"
+      ]
+    },
+    "submit_game": {
+      "js": [
+        "http://localhost:8080/assets/submit_game.js"
+      ]
     }
   }
 }

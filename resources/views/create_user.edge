@@ -11,18 +11,20 @@
     @include('partials/header')
     <div class="Divisor">
         <form class="Form" method="post" action="http://127.0.0.1:3333/users/create">
-            <h2>Login</h2>
-            <h5>Already have an account yet? <span><a href="http://127.0.0.1:3333/users/login">Sign-in</a></span></h5>
-            <label>Email</label>
-            <input placeholder="Email" name="email">
-            <label>Username</label>
-            <input placeholder="Username" name="username">
-            <label>Password</label>
-            <input type="password" placeholder="Password" name="password">
-            <label>Confirme sua senha</label>
-            <input type="password" placeholder="Confirmar senha" name="confirm_password">
-            <div class="CenteredContainer">
-                <button type="submit">Entrar</button>
+            <div class="FormData"> 
+                <h2>Login</h2>
+                <h5>Already have an account yet? <span><a href="http://127.0.0.1:3333/users/login">Sign-in</a></span></h5>
+                <label>Email</label>
+                <input placeholder="Email" name="email">
+                <label>Username</label>
+                <input placeholder="Username" name="username">
+                <label>Password</label>
+                <input type="password" placeholder="Password" name="password">
+                <label>Confirme sua senha</label>
+                <input type="password" placeholder="Confirmar senha" name="confirm_password">
+                <div class="CenteredContainer">
+                    <button type="submit">Entrar</button>
+                </div>
             </div>
         </form>
         <lottie-player src="/animations/login.json" background="transparent"  speed="1"  style="width: 70%; height: 100%;" loop autoplay></lottie-player>

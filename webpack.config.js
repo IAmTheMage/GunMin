@@ -50,7 +50,9 @@ Encore.addEntry('login', './resources/js/login.js')
 Encore.addEntry('signup', './resources/js/signup.js')
 Encore.addEntry('profile_image', './resources/js/profile_image.js')
 Encore.addEntry('drop', './resources/js/drop.js')
-
+Encore.addEntry('publish_game', './resources/js/publish_game.js')
+Encore.addEntry('submitProfileImage', './resources/js/submitProfileImage.js')
+Encore.addEntry('submit_game', './resources/js/submit_game.js')
 /*
 |--------------------------------------------------------------------------
 | Copy assets

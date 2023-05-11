@@ -10,16 +10,21 @@
 <body>
     @include('partials/header')
     <div>
-        <div class="dropzone" id="dropzone">
+        <form id="dropzone" class="dropzone" id="dropzone" action="/users/profile_image/upload" method="post">
             <img class="dropzone-icon" src="/images/drop.png" />
             
-            Solte sua imagem de perfil aqui ou 
-            <input hidden type="file" name="files" class="dropzone-input" />
+            <span>Solte sua imagem de perfil aqui ou </span>
+            <input id="profile_image" hidden type="file" name="profile_image" class="dropzone-input" />
             <p>
-                <button type="submit">Continuar sem uma imagem de perfil</button>
+                <button class="without" type="submit">Continuar sem uma imagem de perfil</button>
             </p>
+        </form>
+        <div class="CenteredContainer">
+            <button id="submitButton" class="submit">Continuar</button>
         </div>
     </div>
+    @include('partials/footer')
 </body>
 <script src="http://localhost:8080/assets/drop.js"></script>
+<script src="http://localhost:8080/assets/submitProfileImage.js"></script>
 </html>

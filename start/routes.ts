@@ -20,12 +20,32 @@
 
 import Route from '@ioc:Adonis/Core/Route'
 
-Route.get('/', async ({ view }) => {
-  return view.render('welcome')
+import Bull from '@ioc:Rocketseat/Bull'
+import Job from 'App/Jobs/RegisterGenre'
+
+Bull.add(new Job().key, {
+  
+})
+
+Route.get('/', async ({ view, response }) => {
+  return response.redirect('/users/login')
 })
 
 Route.get("/users/login", "UsersController.index")
 Route.get("/users/signup", "UsersController.create")
 Route.post("/users/create", "UsersController.create_user")
+Route.post('/users/login', 'UsersController.login')
 
-Route.get('/users/profile_image', "UsersController.profile_image")
+
+
+
+Route.group(() => {
+  Route.get('/users/profile_image', "UsersController.profile_image")
+  Route.post('/users/profile_image/upload', 'ProfileImagesController.upload')
+  Route.get('/homepage', 'HomePagesController.index')
+  Route.get('/users/publish_game', 'GamesController.index')
+  Route.post('/games/publish_game', 'GamesController.publish')
+}).middleware(['auth'])
+
+Route.get("/users/logout", "UsersController.logout")
+

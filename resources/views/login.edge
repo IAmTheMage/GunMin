@@ -10,17 +10,19 @@
 <body class="text-3xl font-bold">
     @include('partials/header')
     <div class="Divisor">
-        <div class="Form">
-            <h2>Login</h2>
-            <h5>Doesn't have an account yet? <span><a href="http://127.0.0.1:3333/users/signup">Sign-up</a></span></h5>
-            <label>Email</label>
-            <input placeholder="Email" name="email">
-            <label>Password</label>
-            <input type="password" placeholder="Password" name="password">
-            <div class="CenteredContainer">
-                <button>Logar</button>
+        <form class="Form" action="http://127.0.0.1:3333/users/login" method="post">
+            <div class="FormData">
+                <h2 id="LoginText">Login</h2>
+                <h5>Doesn't have an account yet? <span><a href="http://127.0.0.1:3333/users/signup">Sign-up</a></span></h5>
+                <label>Email</label>
+                <input placeholder="Email" name="email">
+                <label>Password</label>
+                <input type="password" placeholder="Password" name="password">
+                <div class="CenteredContainer">
+                    <button>Logar</button>
+                </div>
             </div>
-        </div>
+        </form>
         <lottie-player src="/animations/login.json" background="transparent"  speed="1"  style="width: 70%; height: 100%;" loop autoplay></lottie-player>
     </div>
 </body>
