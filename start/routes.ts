@@ -47,5 +47,9 @@ Route.group(() => {
   Route.post('/games/publish_game', 'GamesController.publish')
 }).middleware(['auth'])
 
+Route.group(() => {
+  Route.get('/games/play/:id', 'GamesController.play')
+})
+
 Route.get("/users/logout", "UsersController.logout")
 

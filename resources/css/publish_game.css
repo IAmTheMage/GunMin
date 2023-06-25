@@ -160,3 +160,64 @@ i {
     padding: 14px 10px;
     font-weight: bold;
 }
+
+.without {
+    background-color: #fd2e7c !important;
+    color: white;
+    margin-left: 0px;
+    padding: 8px;
+    border-radius: 8px;
+    width: 100%;
+    font-size: 14px;
+    margin-top: 30px;
+    font-weight: bold;
+    border: 0px solid black;
+}
+
+textarea {
+    margin-top: 10px;
+    width: 100%;
+    border: 1px solid #1a1d1e;
+    font-size: 15px;
+    color: white;
+    background-color: #1a1d1e;
+    padding: 10px;
+}
+
+#loader {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.lds-dual-ring {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+  }
+
+.lds-dual-ring:after {
+    content: " ";
+    display: block;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 6px solid #fff;
+    border-color: #fff transparent #fff transparent;
+    animation: lds-dual-ring 1.2s linear infinite;
+    z-index: 1000;
+}
+
+@keyframes lds-dual-ring {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+  

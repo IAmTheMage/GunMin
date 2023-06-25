@@ -14,25 +14,31 @@
             <div class="Form">
                 <h2 class="FormTitle">Publique seu jogo</h2>
                 <div class="Row">
-                    <div class="Column">
-                        <label>Nome</label>
-                        <input disabled type="text">
-                    </div>
 
                     <div class="Column">
                         <label>Email</label>
-                        <input disabled type="text">
+                        <input value="{{email}}" disabled type="text">
                     </div>
 
                     <div class="Column">
                         <label>Username</label>
-                        <input disabled type="text">
+                        <input value="{{username}}"  disabled type="text">
                     </div>
+                    <div class="Column">
+                        <label style="margin-top: 10px;">Tipo</label>
+                        <div class="select">
+                            <select name="type">
+                                <option value="play_in">Online</option>
+                                <option value="play_out">Offline</option>
+                            </select>
+                        </div>
+                    </div>
+                    
                 </div>
                 <div class="Row">
                     <div class="Column">
                         <label>Nome do jogo</label>
-                        <input disabled type="text">
+                        <input type="text">
                     </div>
 
                     <div class="Column">
@@ -60,19 +66,41 @@
                         </div>
                     </div>
                 </div>
-                <div id="dropzone" class="dropzone" id="dropzone" action="/users/profile_image/upload" method="post">
+                <div style="width: 90%;" class="Column">
+                    <label style="margin-top: 10px;">Descrição</label>
+                    <textarea name="description" id="description"></textarea>
+                </div>
+                
+                <div id="dropzone_image" class="dropzone" id="dropzone_image" action="/users/profile_image/upload" method="post">
+                    <img style="display:none;" class="dropzone-icon" src="/images/drop.png" />
                     <i class="fa-solid fa-upload fa-2xl"></i>
                     
-                    <span>Coloque o zip contendo os arquivos do seu jogo aqui</span>
+                    <span>Solte a imagem do game aqui </span>
+                    <input id="profile_image" hidden type="file" name="profile_image" class="dropzone-input" />
+                    <p>
+                        <button class="without" type="submit">Continuar sem uma imagem</button>
+                    </p>
+                </div>
+                <div id="dropzone" class="dropzone" id="dropzone" action="/users/profile_image/upload" method="post">
+                    <i id="game_icon" class="fa-solid fa-upload fa-2xl"></i>
+                    
+                    <span id="drag_text">Coloque o zip contendo os arquivos do seu jogo aqui</span>
                     <input id="profile_image" hidden type="file" name="profile_image" class="dropzone-input" />
                 </div>
+                <div id="loader">
+                    <div class="lds-dual-ring"></div>
+                </div>
                 <div class="CenteredContainer">
-                    <button id="submitButton" class="submit">Continuar</button>
+                    
+                    <button id="submitButton" class="submit">
+                        Continuar
+                    </button>
                 </div>
             </div>
         </div>
     </div>
     @include('partials/footer')
+    @include('partials/api_loading_modal')
 </body>
 <script src="https://kit.fontawesome.com/91248aca6a.js" crossorigin="anonymous"></script>
 <script src="http://localhost:8080/assets/submit_game.js"></script>

@@ -1,13 +1,19 @@
 import BaseSchema from '@ioc:Adonis/Lucid/Schema'
 
 export default class extends BaseSchema {
-  protected tableName = 'profile_images'
+  protected tableName = 'games'
 
   public async up () {
     this.schema.createTable(this.tableName, (table) => {
       table.uuid('id')
-      table.string("path")
-      table.bigInteger("user_id").references('id').inTable('users').onDelete('CASCADE').onUpdate('CASCADE')
+      table.string('name').unique()
+      table.uuid('genre_id').references('id').inTable('genres')
+      table.uuid('dev_id').references('id').inTable('users')
+      table.text('description')
+      table.boolean('banned').defaultTo(false)
+      table.enum('parental_rating', ['free', '7', '12', '14', '16', '18']).defaultTo('free')
+      table.enum('type', ['play_in', 'play_out']).defaultTo('play_in')
+      table.text('image_path')
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
        */

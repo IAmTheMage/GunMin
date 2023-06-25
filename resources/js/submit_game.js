@@ -14,14 +14,14 @@ let global_uploaded_file;
 
 dropzone.addEventListener('dragover', function(e) {
   this.classList.add('dropzone-dragging');
-  document.querySelector(".dropzone > span").style.color = "#fd2e7c";
-  document.querySelector(".dropzone > i").style.color = "#fd2e7c";
+  document.querySelector(".dropzone > #drag_text").style.color = "#fd2e7c";
+  document.querySelector(".dropzone > #game_icon").style.color = "#fd2e7c";
 }, false);
 
 dropzone.addEventListener('dragleave', function(e) {
   this.classList.remove('dropzone-dragging');
-  document.querySelector(".dropzone > span").style.color = "white";
-  document.querySelector(".dropzone > i").style.color = "white";
+  document.querySelector(".dropzone > #drag_text").style.color = "white";
+  document.querySelector(".dropzone > #game_icon").style.color = "white";
 }, false);
 
 dropzone.addEventListener('drop', function(e) {
@@ -44,6 +44,8 @@ dropzone.addEventListener('click', function(e) {
 
 submitButton_.addEventListener('click', async (e) => {
     e.preventDefault()
+    document.getElementById('loader').style.display = 'flex'
+    submitButton_.style.display = 'none'
     const form = new FormData()
     console.log(global_uploaded_file)
     form.append("game", global_uploaded_file)

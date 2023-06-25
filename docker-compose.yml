@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  teste-postgres-compose:
+  postgres:
     image: postgres
     environment:
       POSTGRES_PASSWORD: "Postgres2019!"
@@ -12,7 +12,7 @@ services:
     networks:
       - postgres-compose-network
       
-  teste-pgadmin-compose:
+  pg_admin:
     image: dpage/pgadmin4
     environment:
       PGADMIN_DEFAULT_EMAIL: "gustavosjn2013@gmail.com"
@@ -20,9 +20,17 @@ services:
     ports:
       - "16543:80"
     depends_on:
-      - teste-postgres-compose
+      - postgres
     networks:
       - postgres-compose-network
+
+  redis:
+    container_name: redis-container
+    image: "redis:latest"
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./data:/data
 
 networks: 
   postgres-compose-network:

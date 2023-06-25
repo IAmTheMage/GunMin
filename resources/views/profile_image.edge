@@ -11,7 +11,8 @@
     @include('partials/header')
     <div>
         <form id="dropzone" class="dropzone" id="dropzone" action="/users/profile_image/upload" method="post">
-            <img class="dropzone-icon" src="/images/drop.png" />
+            <img style="display:none;" class="dropzone-icon" src="/images/drop.png" />
+            <i class="fa-solid fa-upload fa-2xl"></i>
             
             <span>Solte sua imagem de perfil aqui ou </span>
             <input id="profile_image" hidden type="file" name="profile_image" class="dropzone-input" />

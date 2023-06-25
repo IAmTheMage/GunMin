@@ -1,5 +1,6 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { schema, rules } from '@ioc:Adonis/Core/Validator'
+import Genre from 'App/Models/Genre';
 import User from 'App/Models/User';
 
 export default class UsersController {
@@ -53,6 +54,25 @@ export default class UsersController {
     }
 
     public async profile_image(ctx: HttpContextContract) {
+        const { auth } = ctx;
+        if(auth.user) {
+            const id = auth.user?.id
+            const user = await User.findBy('id', id) || new User()
+            const findedGenres = await Genre.query().where('id', '>', '0');
+            let processedGenres: any = [];
+            findedGenres.forEach(genre => {
+                processedGenres.push({
+                    name: genre.name,
+                    slug: genre.slug,
+                    id: genre.id
+                })
+            })
+            return ctx.view.render('publish_game', {
+                genres: processedGenres,
+                username: user.username,
+                email: user.email
+            })
+        }
         return ctx.view.render('profile_image')
     }
 

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "node ace serve --watch",
+    "dev_rm": "sudo rm -rf tmp/uploads/games/ && node ace serve --watch",
     "build": "node ace build --production",
     "start": "node server.js",
     "test": "node ace test"
@@ -38,6 +38,7 @@
     "@adonisjs/shield": "^7.1.0",
     "@adonisjs/view": "^6.2.0",
     "@rocketseat/adonis-bull": "^1.0.4",
+    "extract-zip": "^2.0.1",
     "jszip": "^3.10.1",
     "luxon": "^3.3.0",
     "pg": "^8.10.0",

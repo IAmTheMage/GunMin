@@ -12,7 +12,7 @@ const path = require('path');
 
 export default class GamesController {
     public async index(ctx: HttpContextContract) {
-        const { view } = ctx;
+        const { view, auth } = ctx;
         const findedGenres = await Genre.query().where('id', '>', '0');
         let processedGenres: any = [];
         findedGenres.forEach(genre => {
@@ -22,10 +22,67 @@ export default class GamesController {
                 id: genre.id
             })
         })
+        const id = auth.user?.id
+        const user = await User.findBy('id', id) || new User()
         return view.render('publish_game', {
-            genres: processedGenres
+            genres: processedGenres,
+            username: user.username,
+            email: user.email
         })
     }
+
+    public async unzipFile(caminhoArquivoZip, diretorioOutput) {
+      const outputDir = path.resolve(diretorioOutput);
+    
+      fs.readFile(caminhoArquivoZip, function(err, data) {
+        if (err) {
+          console.error('Erro ao ler o arquivo zip:', err);
+          return;
+        }
+    
+        JSZip.loadAsync(data).then(function(zip) {
+          zip.forEach(function(relPath, zipEntry) {
+            const caminhoCompleto = path.join(outputDir, path.basename(relPath));
+            if (zipEntry.dir) {
+              // Cria uma pasta se o caminho representa um diretório
+              fs.mkdirSync(caminhoCompleto, { recursive: true });
+            } else {
+              // Extrai o arquivo
+              zipEntry.async('nodebuffer').then(function(content) {
+                fs.writeFileSync(caminhoCompleto, content);
+              });
+            }
+          });
+          console.log('Descompactação concluída!');
+        }).catch(function(err) {
+          console.error('Erro ao descompactar o arquivo zip:', err);
+        });
+      });
+    }
+
+    public async copyRecursive(input) {
+      const destination = path.join('..', input);
+      
+      if (!fs.existsSync(destination)) {
+        fs.mkdirSync(destination);
+      }
+      
+      const files = fs.readdirSync(input);
+      
+      files.forEach(file => {
+        const currentPath = path.join(input, file);
+        const newPath = path.join(destination, file);
+        const isDirectory = fs.lstatSync(currentPath).isDirectory();
+        
+        if (isDirectory) {
+          this.copyRecursive(currentPath);
+        } else {
+          fs.copyFileSync(currentPath, newPath);
+        }
+      });
+    }
+    
+      
 
     public async publish(ctx: HttpContextContract) {
         const { request } = ctx;
@@ -42,44 +99,14 @@ export default class GamesController {
                 console.log('Diretório de saída criado:', output);
             }
 
-            fs.readFile(final_name, (err, data) => {
-                if (err) throw err;
-              
-                // cria um objeto JSZip a partir do conteúdo do arquivo zip
-                JSZip.loadAsync(data).then((zip) => {
-                  // procura pelo arquivo index.html na raiz da pasta zipada
-                  const indexFile = zip.file('TestGame/index.html');
-              
-                  // verifica se o arquivo index.html existe
-                  if (!indexFile) {
-                    console.error('Erro: arquivo index.html não encontrado na pasta zipada.');
-                    return;
-                  }
-              
-                  // extrai o arquivo index.html
-                  const indexContent = indexFile.async('text');
-                  fs.writeFileSync(output + 'index.html', indexContent);
-              
-                  // extrai os diretórios css e js
-                  zip.folder('css').forEach((relativePath, file) => {
-                    file.async('nodebuffer').then((content) => {
-                      const filePath = path.join(output, 'TestGame/css', relativePath);
-                      fs.writeFileSync(filePath, content);
-                      console.log('Arquivo extraído:', filePath);
-                    });
-                  });
-              
-                  zip.folder('js').forEach((relativePath, file) => {
-                    file.async('nodebuffer').then((content) => {
-                      const filePath = path.join(output, 'TestGame/js', relativePath);
-                      fs.writeFileSync(filePath, content);
-                      console.log('Arquivo extraído:', filePath);
-                    });
-                  });
-                }).catch((err) => {
-                  console.error('Erro ao ler arquivo zip:', err);
-                });
-            });
+            this.unzipFile(final_name, output)
+            return "Game publicado"
         }
+    }
+
+    public async play(ctx: HttpContextContract) {
+        const { params } = ctx;
+        const game_id = params.id;
+        return game_id
     }
 }
