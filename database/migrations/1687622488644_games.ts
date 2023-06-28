@@ -5,10 +5,10 @@ export default class extends BaseSchema {
 
   public async up () {
     this.schema.createTable(this.tableName, (table) => {
-      table.uuid('id')
+      table.increments('id').primary()
       table.string('name').unique()
-      table.uuid('genre_id').references('id').inTable('genres')
-      table.uuid('dev_id').references('id').inTable('users')
+      table.bigInteger('genre_id').references('id').inTable('genres')
+      table.bigInteger('dev_id').references('id').inTable('users')
       table.text('description')
       table.boolean('banned').defaultTo(false)
       table.enum('parental_rating', ['free', '7', '12', '14', '16', '18']).defaultTo('free')

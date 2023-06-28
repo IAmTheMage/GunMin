@@ -38,7 +38,7 @@
                 <div class="Row">
                     <div class="Column">
                         <label>Nome do jogo</label>
-                        <input type="text">
+                        <input id="game_name" name="game_name" type="text">
                     </div>
 
                     <div class="Column">
@@ -56,9 +56,9 @@
                     </div>
 
                     <div class="Column">
-                        <label>Tipo</label>
+                        <label>Genero</label>
                         <div class="select">
-                            <select>
+                            <select id="genre_values">
                                 @each(genre in genres)
                                 <option value="{{genre.id}}">{{genre.name}}</option>
                                 @end
@@ -71,12 +71,12 @@
                     <textarea name="description" id="description"></textarea>
                 </div>
                 
-                <div id="dropzone_image" class="dropzone" id="dropzone_image" action="/users/profile_image/upload" method="post">
+                <div id="dropzone_img" class="dropzone" id="dropzone_image" action="/users/profile_image/upload" method="post">
                     <img style="display:none;" class="dropzone-icon" src="/images/drop.png" />
-                    <i class="fa-solid fa-upload fa-2xl"></i>
+                    <i id="game_icon_img" class="fa-solid fa-upload fa-2xl"></i>
                     
-                    <span>Solte a imagem do game aqui </span>
-                    <input id="profile_image" hidden type="file" name="profile_image" class="dropzone-input" />
+                    <span id="drag_text_img">Solte a imagem do game aqui </span>
+                    <input id="game_image" hidden type="file" name="game_image" class="dropzone-input" />
                     <p>
                         <button class="without" type="submit">Continuar sem uma imagem</button>
                     </p>
@@ -85,7 +85,7 @@
                     <i id="game_icon" class="fa-solid fa-upload fa-2xl"></i>
                     
                     <span id="drag_text">Coloque o zip contendo os arquivos do seu jogo aqui</span>
-                    <input id="profile_image" hidden type="file" name="profile_image" class="dropzone-input" />
+                    <input id="game_content" hidden type="file" name="profile_image" class="dropzone-input" />
                 </div>
                 <div id="loader">
                     <div class="lds-dual-ring"></div>

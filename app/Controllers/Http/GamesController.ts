@@ -5,6 +5,7 @@ import Job from 'App/Jobs/UploadGame'
 import Application from '@ioc:Adonis/Core/Application'
 import Drive from '@ioc:Adonis/Core/Drive'
 import User from 'App/Models/User';
+import Game from 'App/Models/Game';
 const JSZip = require('jszip');
 const fs = require('fs');
 const path = require('path');
@@ -85,11 +86,13 @@ export default class GamesController {
       
 
     public async publish(ctx: HttpContextContract) {
-        const { request } = ctx;
+        const { request, auth } = ctx;
         const game = request.file('game', {
             extnames: ['zip']
         })
+        console.log(request.body())
         if(game) {
+            const body = request.body()
             await game.move(path.join(Application.tmpPath('uploads'), 'games_zipped'))
             const final_name = path.join(Application.tmpPath('uploads'), 'games_zipped') + "/" + game.fileName
             const output = path.join(Application.tmpPath('uploads'), 'games/') + game.fileName?.split('.')[0]
@@ -100,8 +103,33 @@ export default class GamesController {
             }
 
             this.unzipFile(final_name, output)
+            const game_image = request.file('game_image', {
+              extnames: ['png', 'jpeg', 'jpg']
+            })
+            if(game_image) {
+              await game_image.move(path.join(Application.tmpPath('uploads'), 'game_images', request.body().game_name))
+              const image_file_destination = path.join(Application.tmpPath('uploads'), 'game_images', request.body().game_name) + "/" + game_image.clientName;
+              const genre = request.body().genre
+              const finded_genre = await Genre.findBy('id', genre) || new Genre()
+              const finded_user = await User.findBy('id', auth.user?.id) || new User()
+              const game_data = new Game()
+              game_data.name = request.body().game_name
+              game_data.type = body.type
+              await game_data.related('genre').associate(finded_genre)
+              await game_data.related('dev').associate(finded_user)
+              game_data.image_path = image_file_destination
+              game_data.parental_rating = body.parental_rating
+              game_data.description = body.description
+              await game_data.save()
+              return game_data
+            }
+            else {
+              return "Erro, sem imagem"
+            }
+
             return "Game publicado"
         }
+        return false
     }
 
     public async play(ctx: HttpContextContract) {
