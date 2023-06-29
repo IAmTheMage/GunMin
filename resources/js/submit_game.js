@@ -125,9 +125,13 @@ submitButton_.addEventListener('click', async (e) => {
   form.append("game_image", global_uploaded_img)
   form.append("game_name", document.getElementById('game_name').value)
   form.append("genre", document.getElementById('genre_values').value)
-  await axios.post('/games/publish_game', form, {
+  form.append("description", document.getElementById('description').value)
+  form.append("parental_rating", document.getElementById('parental_rating').value)
+  form.append("type", document.getElementById('game_inside_type').value)
+  const res = await axios.post('/games/publish_game', form, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
   })
+  console.log(res)
 })

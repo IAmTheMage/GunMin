@@ -31,6 +31,15 @@ export default class Game extends BaseModel {
   @belongsTo(() => Genre, {foreignKey: 'genre_id'})
   public genre: BelongsTo<typeof Genre>
 
+  @column({columnName: 'dev_id'})
+  public dev_id: number
+
+  @column({columnName: 'genre_id'})
+  public genre_id: number
+
+  @column({columnName: "client_name"})
+  public client_name: string
+
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 

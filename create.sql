@@ -8,6 +8,7 @@ CREATE TYPE PARENTAL_RATING as ENUM('free', '7', '12', '14', '16', '18');
 CREATE TYPE GAME_TYPE as ENUM('play_in', 'play_out');
 CREATE TYPE REVIEW_QUALITY as ENUM('horrible', 'bad', 'ok', 'good', 'excellent');
 CREATE TYPE REVIEW_USER_TYPE as ENUM('users', 'devs');
+CREATE TYPE PLAN_PAYMENT_TYPE as ENUM('fixed_cost', 'on_demand');
 
 CREATE TABLE IF NOT EXISTS "users" (
 	id UUID DEFAULT uuid_generate_v4(),
@@ -98,3 +99,29 @@ ALTER TABLE likes ADD CONSTRAINT fk_likes_users FOREIGN KEY (user_id) REFERENCES
 ALTER TABLE likes ADD CONSTRAINT fk_likes_devs FOREIGN KEY (user_id) REFERENCES devs(id) DEFERRABLE INITIALLY DEFERRED;
 ALTER TABLE likes ADD CONSTRAINT fk_likes_to_users FOREIGN KEY (to_user_id) REFERENCES users(id) DEFERRABLE INITIALLY DEFERRED;
 ALTER TABLE likes ADD CONSTRAINT fk_likes_to_devs FOREIGN KEY (to_user_id) REFERENCES devs(id) DEFERRABLE INITIALLY DEFERRED;
+
+CREATE TABLE IF NOT EXISTS "games_genres" (
+	game_id UUID REFERENCES games(id),
+	genre_id UUID REFERENCES genres(id),
+	primary key(game_id, genre_id)
+);
+
+CREATE TABLE IF NOT EXISTS "plans" (
+	plan_id UUID DEFAULT uuid_generate_v4(),
+	'payment_type' PLAN_PAYMENT_TYPE NOT NULL,
+	cost DECIMAL(10, 2),
+	storage DECIMAL(10, 16),
+	games_limit int,
+	'name' varchar(50),
+	primary key(plan_id)
+);
+
+CREATE TABLE IF NOT EXISTS "games_played" (
+	game_id UUID REFERENCES games(id),
+	user_id UUID,
+	user_type REVIEW_USER_TYPE,
+	time_played BIGINT,
+);
+
+ALTER TABLE games_played ADD CONSTRAINT fk_games_played_users FOREIGN KEY (user_id) REFERENCES users(id) DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE games_played ADD CONSTRAINT fk_games_played_devs FOREIGN KEY (user_id) REFERENCES devs(id) DEFERRABLE INITIALLY DEFERRED;

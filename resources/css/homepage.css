@@ -1,0 +1,57 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #25292a;
+}
+
+#Container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#MoreGames {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 60%;
+    justify-content: space-between;
+}
+
+.Card {
+    background-color: #17191a;
+    width: 25%;
+    color: white;
+    height: 320px;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.Background-Image {
+    width: 100%;
+    height: 160px;
+    background-image: url("https://steamuserimages-a.akamaihd.net/ugc/940586530515504757/CDDE77CB810474E1C07B945E40AE4713141AFD76/?imw=5000&imh=5000&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false");
+    background-size: cover;
+}
+
+.Card > .Title {
+    margin-left: 5px;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+.Card > p {
+    font-size: 13px;
+    margin-left: 5px;
+}
+
+.Card > span {
+    font-size: 12px;
+    margin-left: 5px;
+    margin-top: 5px;
+}
+

@@ -7,6 +7,7 @@ export default class extends BaseSchema {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id').primary()
       table.string('name').unique()
+      table.string('client_name')
       table.bigInteger('genre_id').references('id').inTable('genres')
       table.bigInteger('dev_id').references('id').inTable('users')
       table.text('description')
