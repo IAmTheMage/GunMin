@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS "users" (
 	id UUID DEFAULT uuid_generate_v4(),
 	username varchar(255) NOT NULL,
 	email varchar(255) NOT NULL,
+	birth_date timestamp,
 	"password" varchar(64) NOT NULL CHECK(length("password") >= 8),
 	reviewRelevance decimal(10, 4) default 1.0,
 	created_updated_at timestamp DEFAULT current_timestamp,
@@ -84,12 +85,14 @@ CREATE TABLE IF NOT EXISTS "banned_game" (
 );
 
 CREATE TABLE IF NOT EXISTS  "resource" (
+	id UUID DEFAULT uuid_generate_v4(),
 	game_id UUID REFERENCES games(id) ON DELETE CASCADE,
 	admin_id UUID REFERENCES admins(id),
 	accepted boolean DEFAULT false,
+	analised boolean DEFAULT false,
 	created_updated_at timestamp DEFAULT current_timestamp,
 	reason text NOT NULL CHECK(length(reason) >= 30),
-	PRIMARY KEY(game_id, admin_id)
+	PRIMARY KEY(id)
 );
 
 CREATE TABLE IF NOT EXISTS "reviews" (
@@ -107,6 +110,7 @@ CREATE TABLE IF NOT EXISTS "likes" (
 	user_id UUID,
 	to_user_id UUID,
 	user_type REVIEW_USER_TYPE NOT NULL,
+	to_user_type REVIEW_USER_TYPE NOT NULL,
 	positive boolean,
 	primary key(game_id, user_id, to_user_id)
 );

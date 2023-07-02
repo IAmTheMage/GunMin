@@ -1,5 +1,22 @@
 const Sentencer = require('sentencer')
 
+function generateRandomDate(startDate, endDate) {
+  const startTimestamp = startDate.getTime();
+  const endTimestamp = endDate.getTime();
+  const randomTimestamp = Math.random() * (endTimestamp - startTimestamp) + startTimestamp;
+  return new Date(randomTimestamp);
+}
+
+function formatarDataSQL(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
+
 
 const knex = require('knex') ({
     client: 'pg',
@@ -80,13 +97,23 @@ function getRandomInt(min, max) {
 
 
 async function generateRandomUser() {
+    const today = new Date();
+
+    // Definir a data limite como 1º de janeiro de 1970
+    const limitDate = new Date('1970-01-01');
     let bill = await knex('users').select()
     if(bill.length > 0) return 0;
+    
     for(let i = 0; i < size; i++) {
+        const randomDateOfBirth = generateRandomDate(limitDate, today);
+
+        // Formatar a data no formato datetime do SQL
+        const formattedDateOfBirth = formatarDataSQL(randomDateOfBirth);
         await knex('users').insert({
             username: generateRandomString(16),
             email: generateRandomString(24) + "@gmail.com",
             password: generateRandomString(18),
+            birth_date: formattedDateOfBirth
         })
     }
 }
