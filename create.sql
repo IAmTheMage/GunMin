@@ -1,6 +1,5 @@
--- Database: gunmin_sql
+-- Database: test_3
 
--- DROP DATABASE IF EXISTS gunmin_sql;
 	
 SELECT * FROM pg_extension WHERE extname = 'uuid-ossp'; -- se existir, não precisa criar a extensão
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
@@ -87,7 +86,7 @@ CREATE TABLE IF NOT EXISTS "banned_game" (
 CREATE TABLE IF NOT EXISTS  "resource" (
 	game_id UUID REFERENCES games(id) ON DELETE CASCADE,
 	admin_id UUID REFERENCES admins(id),
-	accepted boolean DEFAULT false,id UUID DEFAULT uuid_generate_v4(),
+	accepted boolean DEFAULT false,
 	created_updated_at timestamp DEFAULT current_timestamp,
 	reason text NOT NULL CHECK(length(reason) >= 30),
 	PRIMARY KEY(game_id, admin_id)
@@ -96,28 +95,22 @@ CREATE TABLE IF NOT EXISTS  "resource" (
 CREATE TABLE IF NOT EXISTS "reviews" (
 	game_id UUID REFERENCES games(id) ON DELETE CASCADE,
 	user_id UUID,
-	user_type REVIEW_USER_TYPE,
-	review_quality REVIEW_USER_TYPE,
+	user_type REVIEW_USER_TYPE NOT NULL,
+	review_quality REVIEW_QUALITY,
 	description text,
+	created_at timestamp DEFAULT current_timestamp,
 	primary key(game_id, user_id)
 );
-
-ALTER TABLE reviews ADD CONSTRAINT fk_review_users FOREIGN KEY (user_id) REFERENCES users(id) DEFERRABLE INITIALLY DEFERRED;
-ALTER TABLE reviews ADD CONSTRAINT fk_review_devs FOREIGN KEY (user_id) REFERENCES devs(id) DEFERRABLE INITIALLY DEFERRED;
 
 CREATE TABLE IF NOT EXISTS "likes" (
 	game_id UUID REFERENCES games(id) ON DELETE CASCADE,
 	user_id UUID,
 	to_user_id UUID,
-	user_type REVIEW_USER_TYPE,
+	user_type REVIEW_USER_TYPE NOT NULL,
 	positive boolean,
 	primary key(game_id, user_id, to_user_id)
 );
 
-ALTER TABLE likes ADD CONSTRAINT fk_likes_users FOREIGN KEY (user_id) REFERENCES users(id) DEFERRABLE INITIALLY DEFERRED;
-ALTER TABLE likes ADD CONSTRAINT fk_likes_devs FOREIGN KEY (user_id) REFERENCES devs(id) DEFERRABLE INITIALLY DEFERRED;
-ALTER TABLE likes ADD CONSTRAINT fk_likes_to_users FOREIGN KEY (to_user_id) REFERENCES users(id) DEFERRABLE INITIALLY DEFERRED;
-ALTER TABLE likes ADD CONSTRAINT fk_likes_to_devs FOREIGN KEY (to_user_id) REFERENCES devs(id) DEFERRABLE INITIALLY DEFERRED;
 
 CREATE TABLE IF NOT EXISTS "games_genres" (
 	game_id UUID REFERENCES games(id) ON DELETE CASCADE,
@@ -140,24 +133,20 @@ ALTER TABLE devs ADD COLUMN plan_id UUID REFERENCES plans(plan_id);
 CREATE TABLE IF NOT EXISTS "games_played" (
 	game_id UUID REFERENCES games(id),
 	user_id UUID,
-	user_type REVIEW_USER_TYPE,
+	user_type REVIEW_USER_TYPE NOT NULL,
 	time_played BIGINT,
 	last_played_at timestamp DEFAULT current_timestamp,
 	primary key(game_id, user_id)
 );
 
-ALTER TABLE games_played ADD CONSTRAINT fk_games_played_users FOREIGN KEY (user_id) REFERENCES users(id) DEFERRABLE INITIALLY DEFERRED;
-ALTER TABLE games_played ADD CONSTRAINT fk_games_played_devs FOREIGN KEY (user_id) REFERENCES devs(id) DEFERRABLE INITIALLY DEFERRED;
 
-CREATE TABLE IF NOT EXISTS "profile_images" (
-	profile_image_id UUID DEFAULT uuid_generate_v4(),
-	user_id UUID,
-	image_url text NOT NULL,
-	primary key(profile_image_id)
+CREATE TABLE IF NOT EXISTS profile_images (
+    profile_image_id UUID DEFAULT uuid_generate_v4(),
+    user_id UUID,
+	user_type REVIEW_USER_TYPE NOT NULL,
+    image_url TEXT NOT NULL,
+    PRIMARY KEY (profile_image_id)
 );
-
-ALTER TABLE profile_images ADD CONSTRAINT fk_profile_images_users FOREIGN KEY (user_id) REFERENCES users(id) DEFERRABLE INITIALLY DEFERRED;
-ALTER TABLE profile_images ADD CONSTRAINT fk_profile_images_devs FOREIGN KEY (user_id) REFERENCES devs(id) DEFERRABLE INITIALLY DEFERRED;
 
 
 CREATE OR REPLACE FUNCTION update_game_banned_status()
@@ -175,22 +164,6 @@ AFTER INSERT ON banned_game
 FOR EACH ROW
 EXECUTE FUNCTION update_game_banned_status();
 
-CREATE OR REPLACE FUNCTION update_game_banned_status()
-RETURNS TRIGGER AS $$
-BEGIN
-  IF NEW.accepted = true THEN
-    UPDATE games
-    SET banned = false
-    WHERE id = NEW.game_id;
-  END IF;
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER trigger_update_game_banned_status
-AFTER INSERT OR UPDATE ON resource
-FOR EACH ROW
-EXECUTE FUNCTION update_game_banned_status();
 
 CREATE OR REPLACE FUNCTION delete_user_profile_images()
 RETURNS TRIGGER AS $$
@@ -223,9 +196,24 @@ EXECUTE FUNCTION delete_dev_profile_images();
 CREATE OR REPLACE FUNCTION increase_review_relevance()
 	RETURNS TRIGGER AS $$
 	BEGIN
-		IF NEW.positive = true THEN
+		IF NEW.positive = true and NEW.user_type = 'users' THEN
 			UPDATE users
 			SET reviewRelevance = reviewRelevance + 0.01
+			WHERE id = NEW.to_user_id;
+		END IF;
+		IF NEW.positive = true and NEW.user_type = 'devs' THEN
+			UPDATE devs
+			SET reviewRelevance = reviewRelevance + 0.01
+			WHERE id = NEW.to_user_id;
+		END IF;
+		IF NEW.positive = false and NEW.user_type = 'users' THEN
+			UPDATE users
+			SET reviewRelevance = reviewRelevance - 0.004
+			WHERE id = NEW.to_user_id;
+		END IF;
+		IF NEW.positive = false and NEW.user_type = 'devs' THEN
+			UPDATE devs
+			SET reviewRelevance = reviewRelevance - 0.004
 			WHERE id = NEW.to_user_id;
 		END IF;
 		RETURN NEW;
@@ -237,19 +225,21 @@ AFTER INSERT ON likes
 FOR EACH ROW
 EXECUTE FUNCTION increase_review_relevance();
 
-CREATE OR REPLACE FUNCTION decrease_review_relevance()
-	RETURNS TRIGGER AS $$
-	BEGIN
-		IF NEW.positive = false THEN
-			UPDATE users
-			SET reviewRelevance = reviewRelevance - 0.004
-			WHERE id = NEW.to_user_id;
-		END IF;
-		RETURN NEW;
-	END;
+
+CREATE OR REPLACE FUNCTION update_game_banned()
+    RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.accepted = true THEN
+        UPDATE games
+        SET banned = false
+        WHERE id = NEW.game_id;
+    END IF;
+    RETURN NEW;
+END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER like_decrease_review_relevance
-AFTER INSERT ON likes
+CREATE TRIGGER update_game_banned_trigger
+AFTER UPDATE ON resource
 FOR EACH ROW
-EXECUTE FUNCTION decrease_review_relevance();
+WHEN (OLD.accepted IS DISTINCT FROM NEW.accepted AND NEW.accepted = true)
+EXECUTE FUNCTION update_game_banned();

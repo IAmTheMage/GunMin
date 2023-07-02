@@ -1,3 +1,6 @@
+const Sentencer = require('sentencer')
+
+
 const knex = require('knex') ({
     client: 'pg',
     connection: {
@@ -11,9 +14,7 @@ const knex = require('knex') ({
 
 let kp;
 
-size = process.argv[2]
-
-console.log(size)
+size = process.argv[2] || 100
 
 
 function generateRandomCNPJ() {
@@ -60,7 +61,7 @@ function generateRandomCPF() {
 }
 
 function generateRandomString(length) {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUV WXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
   
     for (let i = 0; i < length; i++) {
@@ -86,6 +87,18 @@ async function generateRandomUser() {
             username: generateRandomString(16),
             email: generateRandomString(24) + "@gmail.com",
             password: generateRandomString(18),
+        })
+    }
+}
+
+async function generateRandomAdmins() {
+    let admins = await knex('admins').select()
+    if(admins.length > 0) return 0;
+    for(let i = 0; i < Math.round(size / 4); i++) {
+        await knex('admins').insert({
+          username: generateRandomString(16),
+          email: generateRandomString(24) + "@gmail.com",
+          password: generateRandomString(18),
         })
     }
 }
@@ -202,15 +215,156 @@ async function insertPlans() {
       await knex('plans').insert(plans);
 }
 
+async function insertGenres() {
+  let s = await knex('genres').select()
+    if(s.length > 0) {
+        return 1
+    }
+  const gameGenres = [
+    {name: 'First Person Shooters (FPS Games)', slug: 'fps-games'},
+    {name: 'Role Playing Games (RPG Games)', slug: 'rpg-games'},
+    {name: 'Adventure', slug: 'adventure'},
+    {name: 'Simulation', slug: 'simulation'},
+    {name: 'Strategy', slug: 'strategy'},
+    {name: 'Sports & Fitness', slug: 'sports-fitness'},
+    {name: 'Fighting', slug: 'fighting'},
+    {name: 'Platformers', slug: 'platformers'},
+    {name: 'Survival & Horror', slug: 'survival-horror'},
+    {name: 'Stealth', slug: 'stealth'},
+    {name: 'Interactive Movie', slug: 'interactive-movie'},
+    {name: 'Puzzlers & Party Games', slug: 'puzzlers-party-games'},
+    {name: 'Social Deduction', slug: 'social-deduction'},
+    {name: 'Educational', slug: 'educational'},
+    {name: 'Augmented Reality', slug: 'augmented-reality'}
+  ];
+
+  await knex('genres').insert(gameGenres)
+}
+
+async function generateRandomGames() {
+  const noun = Sentencer.make("{{ an_adjective }} {{ noun }} {{noun}}")
+  const genre = await knex('genres').select()
+  const games = await knex('games').select()
+  let devs = await knex('devs').select()
+  if(games.length > 0) return 0;
+  const parental_rating = ['free', '7', '12', '14', '16', '18']
+  for(let i = 0; i < size; i++) {
+    const name = Sentencer.make("{{an_adjective}} {{noun}} {{noun}}")
+    await knex('games').insert({
+      name,
+      description: generateRandomString(200),
+      parental_rating: parental_rating[getRandomInt(0, 6)],
+      type: getRandomInt(0, 1) == 0 ? 'play_in' : 'play_out',
+      image_path: generateRandomString(100),
+      dev_id: devs[getRandomInt(0, size - 1)].id
+    })
+  }
+}
+
+async function generateRandomBans() {
+  const games = await knex('games').select()
+  const admins = await knex('admins').select()
+  const bans = await knex('banned_game').select()
+
+  if(bans.length > 0) return 0;
+  for(let i = 0; i < 5; i++) {
+    await knex('banned_game').insert({
+      reason: generateRandomString(100),
+      game_id: games[getRandomInt(0, size - 1)].id,
+      admin_id: admins[getRandomInt(0, size / 4 - 1)].id
+    })
+  }
+}
+
+async function generateRandomProfileImages() {
+  const profile_images = await knex('profile_images').select()
+  if(profile_images.length > 0) return 0;
+  const users = await knex('users').select()
+  const devs = await knex('devs').select()
+  for(let i = 0; i < size; i++) {
+    let id = users[getRandomInt(0, size - 1)].id
+    let user_type = "users"
+    const r = Math.random()
+    if(r > 0.5) {
+      id = devs[getRandomInt(0, size - 1)].id
+      user_type = "devs"
+    }
+    await knex('profile_images').insert({
+      user_id: id,
+      image_url: generateRandomString(64),
+      user_type
+    })
+  }
+}
+
+async function generateRandomResources() {
+  const bans = await knex('banned_game').select()
+  const resources = await knex('resource').select()
+  if(resources.length > 0) return 0; 
+  for(let i = 0; i < 3; i++) {
+    const selectedBan = bans[getRandomInt(0, 4)];
+    console.log(selectedBan)
+    await knex('resource').insert({
+      reason: generateRandomString(getRandomInt(0, 250)),
+      game_id: selectedBan.game_id,
+      admin_id: selectedBan.admin_id
+    })
+  }
+}
+
+async function generateRandomReviews() {
+  const reviews = await knex('reviews').select()
+  if(reviews.length > 0) return 0;
+  const users = await knex('users').select()
+  const devs = await knex('devs').select()
+  const games = await knex('games').select()
+  let games_modeled = []
+  for(let k = 0; k < games.length; k++) {
+    games_modeled.push({index: k, game_id: games[k].id})
+  }
+  const quality = ['horrible', 'bad', 'ok', 'good', 'excellent']
+  for(let i = 0; i < Math.round(size / 20); i++) {
+    let id = users[getRandomInt(0, size - 1)].id
+    let selected_game = games_modeled[getRandomInt(0, size - 1 - i)]
+    games_modeled.splice(selected_game.index, 1)
+    let user_type = "users"
+    const r = Math.random()
+    if(r > 0.5) {
+      id = devs[getRandomInt(0, size - 1)].id
+      user_type = "devs"
+    }
+    await knex('reviews').insert({
+      user_id: id,
+      review_quality: quality[getRandomInt(0, 4)],
+      description: generateRandomString(64),
+      game_id: selected_game.game_id,
+      user_type
+    })
+  } 
+}
+
 insertPlans().then(() => {
     generateRandomBillingAddress().then(() => {
         generateRandomDevs().then(() => {
             generateRandomUser().then(() => {
-                knex.destroy()
+                generateRandomAdmins().then(() => {
+                  insertGenres().then(() => {
+                    generateRandomGames().then(() => {
+                      generateRandomBans().then(() => {
+                        generateRandomProfileImages().then(() => {
+                          generateRandomResources().then(() => {
+                            generateRandomReviews().then(() => {
+                              knex.destroy()
+                            })
+                          })
+                        })
+                      })
+                    })
+                  })
+                })
             })
         })
-    })
-    
+    })   
 })
 
 
