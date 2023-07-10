@@ -1,5 +1,6 @@
 import { JobContract } from '@ioc:Rocketseat/Bull'
 import Genre from 'App/Models/Genre';
+import Database from '@ioc:Adonis/Lucid/Database'
 
 /*
 |--------------------------------------------------------------------------
@@ -36,7 +37,7 @@ export default class RegisterGenre implements JobContract {
         {name: 'Educational', slug: 'educational'},
         {name: 'Augmented Reality', slug: 'augmented-reality'}
       ];
-      const count = (await Genre.query().where('id', '>', '0')).length
+      const count = await Database.from('genres').count('* as total')[0]?.total || 0
       if(count == 0) {
         gameGenres.map(async genr => {
           const genre = new Genre()

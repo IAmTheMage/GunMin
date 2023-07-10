@@ -10,11 +10,13 @@ CREATE TYPE REVIEW_QUALITY as ENUM('horrible', 'bad', 'ok', 'good', 'excellent')
 CREATE TYPE REVIEW_USER_TYPE as ENUM('users', 'devs');
 CREATE TYPE PLAN_PAYMENT_TYPE as ENUM('Monthly', 'Annual');
 
+
 CREATE TABLE IF NOT EXISTS "users" (
 	id UUID DEFAULT uuid_generate_v4(),
 	username varchar(255) NOT NULL,
 	email varchar(255) NOT NULL,
-	birth_date timestamp,
+	image_url TEXT NOT NULL,
+	birth_date timestamp NOT NULL,
 	"password" varchar(64) NOT NULL CHECK(length("password") >= 8),
 	reviewRelevance decimal(10, 4) default 1.0,
 	created_updated_at timestamp DEFAULT current_timestamp,
@@ -37,12 +39,12 @@ CREATE TABLE IF NOT EXISTS "devs" (
 	id UUID DEFAULT uuid_generate_v4(),
 	username varchar(255) NOT NULL,
 	email varchar(255) NOT NULL,
-	cpf varchar(11),
-	cnpj varchar(14),
+	image_url TEXT NOT NULL,
+	cpf varchar(11) NOT NULL,
 	"password" varchar(64) NOT NULL CHECK(length("password") >= 8),
 	reviewRelevance decimal(10, 2) default 2.0,
 	created_updated_at timestamp DEFAULT current_timestamp,
-	biling_address_id UUID REFERENCES biling_address(id),
+	biling_address_id UUID NOT NULL REFERENCES biling_address(id),
 	PRIMARY KEY(id)
 );
 
@@ -64,17 +66,18 @@ CREATE TABLE IF NOT EXISTS "genres" (
 );
 
 CREATE TABLE IF NOT EXISTS "games" (
-	id UUID DEFAULT uuid_generate_v4(),
-	"name" varchar(255) NOT NULL,
-	description text NOT NULL CHECK(length("description") >= 30),
-	banned boolean DEFAULT false,
-	parental_rating PARENTAL_RATING DEFAULT 'free',
-	"type" GAME_TYPE DEFAULT 'play_in',
-	image_path text,
-	dev_id uuid REFERENCES devs(id),
-	created_updated_at timestamp DEFAULT current_timestamp,
-	PRIMARY KEY(id)
+    id UUID DEFAULT uuid_generate_v4(),
+    "name" varchar(255) UNIQUE NOT NULL,
+    description text NOT NULL CHECK(length("description") >= 30),
+    banned boolean DEFAULT false,
+    parental_rating PARENTAL_RATING DEFAULT 'free',
+    "type" GAME_TYPE DEFAULT 'play_in',
+    image_path text,
+    dev_id uuid NOT NULL REFERENCES devs(id),
+    created_updated_at timestamp DEFAULT current_timestamp,
+    PRIMARY KEY(id)
 );
+
 
 CREATE TABLE IF NOT EXISTS "banned_game" (
 	game_id UUID REFERENCES games(id) ON DELETE CASCADE,
@@ -84,7 +87,7 @@ CREATE TABLE IF NOT EXISTS "banned_game" (
 	PRIMARY KEY(game_id, admin_id)
 );
 
-CREATE TABLE IF NOT EXISTS  "resource" (
+CREATE TABLE IF NOT EXISTS  "appeal" (
 	id UUID DEFAULT uuid_generate_v4(),
 	game_id UUID REFERENCES games(id) ON DELETE CASCADE,
 	admin_id UUID REFERENCES admins(id),
@@ -96,10 +99,10 @@ CREATE TABLE IF NOT EXISTS  "resource" (
 );
 
 CREATE TABLE IF NOT EXISTS "reviews" (
-	game_id UUID REFERENCES games(id) ON DELETE CASCADE,
-	user_id UUID,
+	game_id UUID NOT NULL REFERENCES games(id) ON DELETE CASCADE,
+	user_id UUID NOT NULL,
 	user_type REVIEW_USER_TYPE NOT NULL,
-	review_quality REVIEW_QUALITY,
+	review_quality REVIEW_QUALITY NOT NULL,
 	description text,
 	created_at timestamp DEFAULT current_timestamp,
 	primary key(game_id, user_id)
@@ -107,8 +110,8 @@ CREATE TABLE IF NOT EXISTS "reviews" (
 
 CREATE TABLE IF NOT EXISTS "likes" (
 	game_id UUID REFERENCES games(id) ON DELETE CASCADE,
-	user_id UUID,
-	to_user_id UUID,
+	user_id UUID NOT NULL,
+    to_user_id UUID NOT NULL,
 	user_type REVIEW_USER_TYPE NOT NULL,
 	to_user_type REVIEW_USER_TYPE NOT NULL,
 	positive boolean,
@@ -117,8 +120,8 @@ CREATE TABLE IF NOT EXISTS "likes" (
 
 
 CREATE TABLE IF NOT EXISTS "games_genres" (
-	game_id UUID REFERENCES games(id) ON DELETE CASCADE,
-	genre_id UUID REFERENCES genres(id) ON DELETE CASCADE,
+	game_id UUID NOT NULL REFERENCES games(id) ON DELETE CASCADE,
+	genre_id UUID NOT NULL REFERENCES genres(id) ON DELETE CASCADE,
 	primary key(game_id, genre_id)
 );
 
@@ -132,24 +135,15 @@ CREATE TABLE IF NOT EXISTS "plans" (
 	primary key(plan_id)
 );
 
-ALTER TABLE devs ADD COLUMN plan_id UUID REFERENCES plans(plan_id);
+ALTER TABLE devs ADD COLUMN plan_id UUID NOT NULL REFERENCES plans(plan_id);
 
 CREATE TABLE IF NOT EXISTS "games_played" (
-	game_id UUID REFERENCES games(id),
-	user_id UUID,
+	game_id UUID NOT NULL REFERENCES games(id),
+	user_id UUID NOT NULL,
 	user_type REVIEW_USER_TYPE NOT NULL,
 	time_played BIGINT,
 	last_played_at timestamp DEFAULT current_timestamp,
 	primary key(game_id, user_id)
-);
-
-
-CREATE TABLE IF NOT EXISTS profile_images (
-    profile_image_id UUID DEFAULT uuid_generate_v4(),
-    user_id UUID,
-	user_type REVIEW_USER_TYPE NOT NULL,
-    image_url TEXT NOT NULL,
-    PRIMARY KEY (profile_image_id)
 );
 
 
@@ -168,34 +162,6 @@ AFTER INSERT ON banned_game
 FOR EACH ROW
 EXECUTE FUNCTION update_game_banned_status();
 
-
-CREATE OR REPLACE FUNCTION delete_user_profile_images()
-RETURNS TRIGGER AS $$
-BEGIN
-    DELETE FROM profile_images
-    WHERE user_id = OLD.id;
-    RETURN OLD;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER trigger_delete_user_profile_images
-BEFORE DELETE ON users
-FOR EACH ROW
-EXECUTE FUNCTION delete_user_profile_images();
-
-CREATE OR REPLACE FUNCTION delete_dev_profile_images()
-RETURNS TRIGGER AS $$
-BEGIN
-    DELETE FROM profile_images
-    WHERE user_id = OLD.id;
-    RETURN OLD;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER trigger_delete_dev_profile_images
-BEFORE DELETE ON devs
-FOR EACH ROW
-EXECUTE FUNCTION delete_dev_profile_images();
 
 CREATE OR REPLACE FUNCTION increase_review_relevance()
 	RETURNS TRIGGER AS $$
@@ -247,3 +213,68 @@ AFTER UPDATE ON resource
 FOR EACH ROW
 WHEN (OLD.accepted IS DISTINCT FROM NEW.accepted AND NEW.accepted = true)
 EXECUTE FUNCTION update_game_banned();
+
+CREATE OR REPLACE FUNCTION update_dev_review_relevance()
+    RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE devs
+    SET reviewRelevance = reviewRelevance + 0.1 -- Aumentar o valor de reviewRelevance em 0.1
+    WHERE id = NEW.dev_id;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER game_published_trigger
+AFTER INSERT ON games
+FOR EACH ROW
+EXECUTE FUNCTION update_dev_review_relevance();
+
+CREATE OR REPLACE FUNCTION validate_user_type_user_dev()
+    RETURNS TRIGGER AS $$
+    BEGIN
+        IF NEW.user_type = 'users' AND NOT EXISTS (SELECT 1 FROM users WHERE id = NEW.user_id) THEN
+            RAISE EXCEPTION 'Invalid user_id for user_type users';
+        ELSIF NEW.user_type = 'devs' AND NOT EXISTS (SELECT 1 FROM devs WHERE id = NEW.user_id) THEN
+            RAISE EXCEPTION 'Invalid user_id for user_type devs';
+        END IF;
+        RETURN NEW;
+    END;
+$$ LANGUAGE plpgsql;
+
+-- Crie um gatilho para chamar a função antes de inserir ou atualizar linhas na tabela
+CREATE TRIGGER validate_user_type_user_dev_trigger
+    BEFORE INSERT OR UPDATE ON reviews
+    FOR EACH ROW
+    EXECUTE FUNCTION validate_user_type_user_dev();
+
+
+-- Criar uma função para verificar a existência dos IDs nas tabelas users e devs
+CREATE OR REPLACE FUNCTION validate_user_dev_exists()
+  RETURNS TRIGGER AS
+$$
+BEGIN
+  -- Verificar se o to_user_id existe na tabela users ou devs
+  IF (NEW.to_user_type = 'users' AND NOT EXISTS (SELECT 1 FROM users WHERE id = NEW.to_user_id)) THEN
+    RAISE EXCEPTION 'to_user_id não encontrado na tabela users';
+  ELSIF (NEW.to_user_type = 'devs' AND NOT EXISTS (SELECT 1 FROM devs WHERE id = NEW.to_user_id)) THEN
+    RAISE EXCEPTION 'to_user_id não encontrado na tabela devs';
+  END IF;
+
+  -- Verificar se o user_id existe na tabela users ou devs
+  IF (NEW.user_type = 'users' AND NOT EXISTS (SELECT 1 FROM users WHERE id = NEW.user_id)) THEN
+    RAISE EXCEPTION 'user_id não encontrado na tabela users';
+  ELSIF (NEW.user_type = 'devs' AND NOT EXISTS (SELECT 1 FROM devs WHERE id = NEW.user_id)) THEN
+    RAISE EXCEPTION 'user_id não encontrado na tabela devs';
+  END IF;
+
+  RETURN NEW;
+END;
+$$
+LANGUAGE plpgsql;
+
+-- Criar o trigger na tabela likes para chamar a função acima antes da inserção
+CREATE TRIGGER validate_likes_user_dev_trigger
+  BEFORE INSERT ON likes
+  FOR EACH ROW
+  EXECUTE FUNCTION validate_user_dev_exists();

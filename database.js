@@ -113,6 +113,7 @@ async function generateRandomUser() {
             username: generateRandomString(16),
             email: generateRandomString(24) + "@gmail.com",
             password: generateRandomString(18),
+            image_url: generateRandomString(64),
             birth_date: formattedDateOfBirth
         })
     }
@@ -152,27 +153,15 @@ async function generateRandomDevs() {
     kp = await knex('biling_address').select()
     let plans = await knex('plans').select()
     for(let i = 0; i < size; i++) {
-        let rand = Math.random()
-        if(rand < 0.5) {
-            await knex('devs').insert({
-                username: generateRandomString(16),
-                email: generateRandomString(24) + "@gmail.com",
-                password: generateRandomString(18),
-                cpf: generateRandomCPF().toString(),
-                biling_address_id: kp[getRandomInt(0, size - 1)].id,
-                plan_id: plans[getRandomInt(0, 7)].plan_id
-            })
-        }
-        else {
-            await knex('devs').insert({
-                username: generateRandomString(16),
-                email: generateRandomString(24) + "@gmail.com",
-                password: generateRandomString(18),
-                cnpj: generateRandomCNPJ(),
-                biling_address_id: kp[getRandomInt(0, size - 1)].id,
-                plan_id: plans[getRandomInt(0, 7)].plan_id
-            })
-        }
+        await knex('devs').insert({
+          username: generateRandomString(16),
+          email: generateRandomString(24) + "@gmail.com",
+          password: generateRandomString(18),
+          cpf: generateRandomCPF().toString(),
+          image_url: generateRandomString(64),
+          biling_address_id: kp[getRandomInt(0, size - 1)].id,
+          plan_id: plans[getRandomInt(0, 7)].plan_id
+      })
     }
 }
 
@@ -303,36 +292,21 @@ async function generateRandomBans() {
   }
 }
 
-async function generateRandomProfileImages() {
-  const profile_images = await knex('profile_images').select()
-  if(profile_images.length > 0) return 0;
-  const users = await knex('users').select()
-  const devs = await knex('devs').select()
-  for(let i = 0; i < size; i++) {
-    let id = users[getRandomInt(0, size - 1)].id
-    let user_type = "users"
-    const r = Math.random()
-    if(r > 0.5) {
-      id = devs[getRandomInt(0, size - 1)].id
-      user_type = "devs"
-    }
-    await knex('profile_images').insert({
-      user_id: id,
-      image_url: generateRandomString(64),
-      user_type
-    })
-  }
-}
 
-async function generateRandomResources() {
+async function generateRandomAppeals() {
   const bans = await knex('banned_game').select()
-  const resources = await knex('resource').select()
-  if(resources.length > 0) return 0; 
+  const Appeals = await knex('Appeal').select()
+  if(Appeals.length > 0) return 0; 
+  let bans_modeled = []
+  for(let i = 0; i < bans.length; i++) {
+    bans_modeled.push({index: i, game_id: bans[i].game_id, admin_id: bans[i].admin_id})
+  }
+  console.log(bans_modeled)
   for(let i = 0; i < 3; i++) {
-    const selectedBan = bans[getRandomInt(0, 4)];
-    console.log(selectedBan)
-    await knex('resource').insert({
-      reason: generateRandomString(getRandomInt(0, 250)),
+    const selectedBan = bans_modeled[getRandomInt(0, bans_modeled.length - 1)];
+    bans_modeled.splice(selectedBan.index, 1)
+    await knex('Appeal').insert({
+      reason: generateRandomString(getRandomInt(32, 250)),
       game_id: selectedBan.game_id,
       admin_id: selectedBan.admin_id
     })
@@ -378,11 +352,9 @@ insertPlans().then(() => {
                   insertGenres().then(() => {
                     generateRandomGames().then(() => {
                       generateRandomBans().then(() => {
-                        generateRandomProfileImages().then(() => {
-                          generateRandomResources().then(() => {
-                            generateRandomReviews().then(() => {
-                              knex.destroy()
-                            })
+                        generateRandomAppeals().then(() => {
+                          generateRandomReviews().then(() => {
+                            knex.destroy()
                           })
                         })
                       })
@@ -393,6 +365,39 @@ insertPlans().then(() => {
         })
     })   
 })
+
+// CREATE OR REPLACE FUNCTION get_games_for_user(user_id UUID)
+// RETURNS TABLE (
+//     game_id UUID,
+//     game_title varchar(255),
+//     parental_rating PARENTAL_RATING
+// )
+// AS $$
+// BEGIN
+//     RETURN QUERY
+//     SELECT
+//         g.id AS game_id,
+//         g.name AS game_title,
+//         g.parental_rating AS parental_rating
+//     FROM
+//         games g
+//     INNER JOIN
+//         users u ON u.birth_date <= CURRENT_DATE - INTERVAL '1 year' * (
+//             CASE
+//                 WHEN g.parental_rating = 'free' THEN 0
+//                 WHEN g.parental_rating = '7' THEN 7
+//                 WHEN g.parental_rating = '12' THEN 12
+//                 WHEN g.parental_rating = '14' THEN 14
+//                 WHEN g.parental_rating = '16' THEN 16
+//                 WHEN g.parental_rating = '18' THEN 18
+//             END
+//         )
+//     WHERE
+//         u.id = user_id;
+// END;
+// $$ LANGUAGE plpgsql;
+
+
 
 
 

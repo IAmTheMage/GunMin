@@ -7,7 +7,7 @@ export default class HomePagesController {
 
     public async index(ctx: HttpContextContract) {
         const { view } = ctx;
-        const games = await Game.query().where('id', '>', '0')
+        const games = await Game.all()
         let games_object: any = [];
         games.forEach(async game => {
             const _href = Encryption.encrypt({id: game.id, name: game.name})

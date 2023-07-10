@@ -5,13 +5,14 @@ export default class extends BaseSchema {
 
   public async up () {
     this.schema.createTable(this.tableName, (table) => {
-      table.increments('id').primary()
-
+      table.uuid('id').index().primary()
+      
       table.string("name", 32)
       table.string("email").unique()
       table.string("username", 32).unique()
       table.decimal("reviewRelevance", 16).defaultTo(1.0)
       table.string("password")
+      table.string("profile_image_path")
       
 
       /**

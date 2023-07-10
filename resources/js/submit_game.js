@@ -117,6 +117,7 @@ dropzone_img.addEventListener('click', function(e) {
 
 submitButton_.addEventListener('click', async (e) => {
   e.preventDefault()
+  e.stopPropagation()
   document.getElementById('loader').style.display = 'flex'
   submitButton_.style.display = 'none'
   const form = new FormData()
@@ -133,5 +134,5 @@ submitButton_.addEventListener('click', async (e) => {
         'Content-Type': 'multipart/form-data'
       }
   })
-  console.log(res)
+  window.location.href = "http://127.0.0.1:3333/homepage"
 })

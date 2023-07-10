@@ -15,7 +15,7 @@ import Encryption from '@ioc:Adonis/Core/Encryption'
 export default class GamesController {
     public async index(ctx: HttpContextContract) {
         const { view, auth } = ctx;
-        const findedGenres = await Genre.query().where('id', '>', '0');
+        const findedGenres = await Genre.all()
         let processedGenres: any = [];
         findedGenres.forEach(genre => {
             processedGenres.push({
@@ -119,10 +119,9 @@ export default class GamesController {
               game_data.parental_rating = body.parental_rating
               game_data.description = body.description
               game_data.client_name = game.clientName;
-              await game_data.related('genre').associate(finded_genre)
-              await game_data.related('dev').associate(finded_user)
-              
-              await game_data.save()
+              await game_data.related('dev').associate(finded_user)  
+              await game_data.related('genres').attach([finded_genre.id]) 
+              await game_data.save()  
               return game_data
             }
             else {
@@ -136,7 +135,7 @@ export default class GamesController {
         const { params, view } = ctx;
         const data:any = Encryption.decrypt(params.id)
         const game = await Game.findBy('id', data.id)  || new Game()
-        await game.load('genre')
+        await game.load('genres')
         const processed_game = game.client_name.replace('.zip', '')
         const href = "http://localhost:3333/uploads/games/" + processed_game + "/" + processed_game + "/index.html"
         console.log(href)
@@ -144,7 +143,7 @@ export default class GamesController {
           id: game.id,
           name: game.name,
           href,
-          genre_name: game.genre.name,
+          genre_name: game.genres[0].name,
           parental_rating: game.parental_rating == "free" ? "Livre" : game.parental_rating + " anos"
         })
     }

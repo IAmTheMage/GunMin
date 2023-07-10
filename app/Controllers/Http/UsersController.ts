@@ -1,14 +1,13 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import Genre from 'App/Models/Genre';
-import ProfileImage from 'App/Models/ProfileImage';
 import User from 'App/Models/User';
 
 export default class UsersController {
     public async index(ctx: HttpContextContract) {
         const { view, auth, response } = ctx;
-        const isAuth = await auth.check();
-        if(isAuth) {
+        console.log(auth.user?.id)
+        if(auth.user?.id) {
             return response.redirect('/users/profile_image')
         }
         return view.render("login")
@@ -56,7 +55,7 @@ export default class UsersController {
 
     public async profile_image(ctx: HttpContextContract) {
         const { auth } = ctx;
-        const profile_image = await ProfileImage.findBy('user_id', auth.user?.id)
+        const profile_image = (await User.findBy('id', auth.user?.id) || new User()).profile_image_path
         
         if(profile_image != null) {
             console.log(profile_image)
