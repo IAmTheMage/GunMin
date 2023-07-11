@@ -61,7 +61,7 @@ export default class UsersController {
             console.log(profile_image)
             const id = auth.user?.id
             const user = await User.findBy('id', id) || new User()
-            const findedGenres = await Genre.query().where('id', '>', '0');
+            const findedGenres = await Genre.all()
             let processedGenres: any = [];
             findedGenres.forEach(genre => {
                 processedGenres.push({

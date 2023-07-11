@@ -18,7 +18,9 @@ export default class HomePagesController {
                 image_url: game.image_path,
                 parental_rating: game.parental_rating == "free" ? "Livre" : game.parental_rating + " anos",
                 type: game.type,
-                href,
+                href: game.type == 'play_in' ? href : `http://localhost:3333/uploads/games_zipped/${game.client_name}`,
+                download: game.type == 'play_out' ? true : false,
+                zip: game.client_name
             });
         })
         return view.render('homepage', {games: games_object})
