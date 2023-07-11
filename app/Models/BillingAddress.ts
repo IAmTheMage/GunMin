@@ -31,6 +31,6 @@ export default class BillingAddress extends BaseModel {
   }
 
   static get table () {
-    return 'biling_address'
+    return 'billing_address'
   }
 }
