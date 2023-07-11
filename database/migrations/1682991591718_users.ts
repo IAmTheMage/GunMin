@@ -6,7 +6,7 @@ export default class extends BaseSchema {
   public async up () {
     this.schema.createTable(this.tableName, (table) => {
       table.uuid('id').index().primary()
-      
+      table.string('cpf', 11)
       table.string("name", 32)
       table.string("email").unique()
       table.string("username", 32).unique()

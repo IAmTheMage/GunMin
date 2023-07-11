@@ -272,7 +272,8 @@ async function generateRandomGames() {
       parental_rating: parental_rating[getRandomInt(0, 6)],
       type: getRandomInt(0, 1) == 0 ? 'play_in' : 'play_out',
       image_path: generateRandomString(100),
-      dev_id: devs[getRandomInt(0, size - 1)].id
+      dev_id: devs[getRandomInt(0, size - 1)].id,
+      client_name: generateRandomString(64)
     })
   }
 }
