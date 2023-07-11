@@ -1,0 +1,27 @@
+[
+  {
+    index: 0,
+    game_id: 'f1c4f05c-1664-416d-8389-f4e32201f971',
+    admin_id: '509f97b8-3739-47be-8715-a7cced7efe06'
+  },
+  {
+    index: 1,
+    game_id: '1d34c590-2d56-457d-8d03-e892a34efd93',
+    admin_id: 'bbd24de7-7fb7-4cd2-8da6-dc03c07e9a16'
+  },
+  {
+    index: 2,
+    game_id: '53f51dea-f88f-4838-a580-215bbfaf7fc7',
+    admin_id: '0e8f853d-a87a-40f2-8a9d-13dc26882472'
+  },
+  {
+    index: 3,
+    game_id: '24605384-350f-4fe2-858d-b1772817d7dc',
+    admin_id: '53a2a0c4-e38c-4c86-a9e4-26527005838b'
+  },
+  {
+    index: 4,
+    game_id: '338ba6bd-3bf0-4a74-ad3d-16cf76d5b4c2',
+    admin_id: 'aaf51b36-5da6-48c9-8455-d627d9afca57'
+  }
+]

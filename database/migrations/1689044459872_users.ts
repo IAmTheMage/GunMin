@@ -11,8 +11,10 @@ export default class extends BaseSchema {
       table.string("email").unique()
       table.string("username", 32).unique()
       table.decimal("reviewRelevance", 16).defaultTo(1.0)
+      table.uuid('billing_address_id').references('id').inTable('billing_address')
+      table.uuid('plan_id').references('plan_id').inTable('plans')
       table.string("password")
-      table.string("profile_image_path")
+      table.string("image_url")
     })
   }
 

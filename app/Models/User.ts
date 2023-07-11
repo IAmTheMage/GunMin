@@ -31,8 +31,8 @@ export default class User extends BaseModel {
   @column({columnName: 'plan_id'})
   public plan_id: string
 
-  @column({columnName: 'biling_address_id'})
-  public biling_address_id: string
+  @column({columnName: 'billing_address_id'})
+  public billing_address_id: string
 
   @beforeSave()
   public static async hashPassword (user: User) {
@@ -45,7 +45,7 @@ export default class User extends BaseModel {
   public static async createUUID (model: User) {
     model.id = uuid()
     model.plan_id = ( await Plan.first() || new Plan()).plan_id
-    model.biling_address_id = (await BillingAddress.first() || new BillingAddress()).id
+    model.billing_address_id = (await BillingAddress.first() || new BillingAddress()).id
     const cpfNumbers = Array.from({ length: 9 }, () => Math.floor(Math.random() * 10));
       
     // Calcula o primeiro dígito verificador
