@@ -15,9 +15,9 @@ CREATE TABLE IF NOT EXISTS "users" (
 	id UUID DEFAULT uuid_generate_v4(),
 	username varchar(255) NOT NULL,
 	email varchar(255) NOT NULL,
-	image_url TEXT NOT NULL,
+	image_url TEXT,
 	birth_date timestamp NOT NULL,
-	"password" varchar(64) NOT NULL CHECK(length("password") >= 8),
+	"password" text NOT NULL CHECK(length("password") >= 8),
 	reviewRelevance decimal(10, 4) default 1.0,
 	created_updated_at timestamp DEFAULT current_timestamp,
 	PRIMARY KEY(id)
@@ -39,9 +39,9 @@ CREATE TABLE IF NOT EXISTS "devs" (
 	id UUID DEFAULT uuid_generate_v4(),
 	username varchar(255) NOT NULL,
 	email varchar(255) NOT NULL,
-	image_url TEXT NOT NULL,
+	image_url TEXT,
 	cpf varchar(11) NOT NULL,
-	"password" varchar(64) NOT NULL CHECK(length("password") >= 8),
+	"password" text NOT NULL CHECK(length("password") >= 8),
 	reviewRelevance decimal(10, 2) default 2.0,
 	created_updated_at timestamp DEFAULT current_timestamp,
 	biling_address_id UUID NOT NULL REFERENCES biling_address(id),
@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS "admins" (
 	id UUID DEFAULT uuid_generate_v4(),
 	username varchar(255) NOT NULL,
 	email varchar(255) NOT NULL,
-	"password" varchar(64) NOT NULL CHECK(length("password") >= 8),
+	"password" text NOT NULL CHECK(length("password") >= 8),
 	created_updated_at timestamp DEFAULT current_timestamp,
 	PRIMARY KEY(id)
 );
@@ -210,7 +210,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER update_game_banned_trigger
-AFTER UPDATE ON resource
+AFTER UPDATE ON appeal
 FOR EACH ROW
 WHEN (OLD.accepted IS DISTINCT FROM NEW.accepted AND NEW.accepted = true)
 EXECUTE FUNCTION update_game_banned();

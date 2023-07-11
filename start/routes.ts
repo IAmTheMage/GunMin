@@ -22,8 +22,13 @@ import Route from '@ioc:Adonis/Core/Route'
 
 import Bull from '@ioc:Rocketseat/Bull'
 import Job from 'App/Jobs/RegisterGenre'
+import Job2 from 'App/Jobs/CreatePlansAndBillingAddress'
 
 Bull.add(new Job().key, {
+  
+})
+
+Bull.add(new Job2().key, {
   
 })
 
