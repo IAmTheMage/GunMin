@@ -5,9 +5,9 @@ export default class extends BaseSchema {
 
   public async up () {
     this.schema.createTable(this.tableName, (table) => {
-      table.uuid('id')
+      table.uuid('id').index().primary()
       table.string('name').unique()
-      table.uuid('genre_id').references('id').inTable('genres')
+      table.string('client_name')
       table.uuid('dev_id').references('id').inTable('users')
       table.text('description')
       table.boolean('banned').defaultTo(false)

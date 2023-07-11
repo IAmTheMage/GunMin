@@ -54,6 +54,22 @@
       "js": [
         "http://localhost:8080/assets/submit_game.js"
       ]
+    },
+    "homepage": {
+      "css": [
+        "http://localhost:8080/assets/homepage.css"
+      ],
+      "js": [
+        "http://localhost:8080/assets/homepage.js"
+      ]
+    },
+    "play_game": {
+      "css": [
+        "http://localhost:8080/assets/play_game.css"
+      ],
+      "js": [
+        "http://localhost:8080/assets/play_game.js"
+      ]
     }
   }
 }

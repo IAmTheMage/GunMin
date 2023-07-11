@@ -4,9 +4,26 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Homepage</title>
+    <title>Aqui tem os melhores jogos</title>
+    <link rel="stylesheet" type="text/css" href="http://localhost:8080/assets/homepage.css"> 
 </head>
 <body>
-    <h1>Homepage</h1>
+    @include('partials/header')
+    <div id="Container">
+        <div id="MainGame">
+
+        </div>
+        <div id="MoreGames">
+            @each(game in games)
+            <a href="{{game.href}}" class="Card">
+                <div style="background-image: url('{{game.image_url}}');" class="Background-Image"></div>
+                <p class="Title">{{game.name}}</p>
+                <p>{{game.description}}</p>
+                <span>Classificação indicativa: {{game.parental_rating}} Tipo: {{game.type}}</span>
+            </a>
+            @end
+        </div>
+    </div>
+    @include('partials/footer')
 </body>
 </html>

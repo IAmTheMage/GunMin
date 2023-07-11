@@ -34,6 +34,9 @@ Route.get('/', async ({ view, response }) => {
 Route.get("/users/login", "UsersController.index")
 Route.get("/users/signup", "UsersController.create")
 Route.post("/users/create", "UsersController.create_user")
+Route.get('/login', async ({response}) => {
+  return response.redirect('/users/login')
+})
 Route.post('/users/login', 'UsersController.login')
 
 
@@ -48,7 +51,7 @@ Route.group(() => {
 }).middleware(['auth'])
 
 Route.group(() => {
-  Route.get('/games/play/:id', 'GamesController.play')
+  Route.get('/game/play/:id', 'GamesController.play')
 })
 
 Route.get("/users/logout", "UsersController.logout")

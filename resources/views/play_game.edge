@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{name}}</title>
+    <link rel="stylesheet" type="text/css" href="http://localhost:8080/assets/play_game.css"> 
+    <style>
+        body, html {
+          height: 100%;
+          margin: 0;
+        }
+        iframe {
+          width: 800px;
+          height: 700px;
+        }
+      </style>
+</head>
+<body>
+    @include('partials/header')
+    <div class="GameContainer">
+      <h1>{{name}}</h1>
+      <div class="Gamerow">
+        <span>Genero: {{genre_name}}</span>
+        <span>Classificação indicativa: {{parental_rating}}</span>
+        <span>Nota média: 9.8</span>
+      </div>
+      <iframe src="{{href}}"></iframe>
+    </div>
+</body>
+</html>

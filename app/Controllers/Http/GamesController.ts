@@ -5,15 +5,17 @@ import Job from 'App/Jobs/UploadGame'
 import Application from '@ioc:Adonis/Core/Application'
 import Drive from '@ioc:Adonis/Core/Drive'
 import User from 'App/Models/User';
+import Game from 'App/Models/Game';
 const JSZip = require('jszip');
 const fs = require('fs');
 const path = require('path');
+import Encryption from '@ioc:Adonis/Core/Encryption'
 
 
 export default class GamesController {
     public async index(ctx: HttpContextContract) {
         const { view, auth } = ctx;
-        const findedGenres = await Genre.query().where('id', '>', '0');
+        const findedGenres = await Genre.all()
         let processedGenres: any = [];
         findedGenres.forEach(genre => {
             processedGenres.push({
@@ -42,7 +44,7 @@ export default class GamesController {
     
         JSZip.loadAsync(data).then(function(zip) {
           zip.forEach(function(relPath, zipEntry) {
-            const caminhoCompleto = path.join(outputDir, path.basename(relPath));
+            const caminhoCompleto = path.join(outputDir, relPath);
             if (zipEntry.dir) {
               // Cria uma pasta se o caminho representa um diretório
               fs.mkdirSync(caminhoCompleto, { recursive: true });
@@ -85,28 +87,64 @@ export default class GamesController {
       
 
     public async publish(ctx: HttpContextContract) {
-        const { request } = ctx;
+        const { request, auth } = ctx;
         const game = request.file('game', {
             extnames: ['zip']
         })
         if(game) {
-            await game.move(path.join(Application.tmpPath('uploads'), 'games_zipped'))
-            const final_name = path.join(Application.tmpPath('uploads'), 'games_zipped') + "/" + game.fileName
-            const output = path.join(Application.tmpPath('uploads'), 'games/') + game.fileName?.split('.')[0]
+            const body = request.body()
+            await game.move(path.join(Application.publicPath('uploads'), 'games_zipped'))
+            const final_name = path.join(Application.publicPath('uploads'), 'games_zipped') + "/" + game.fileName
+            const output = path.join(Application.publicPath('uploads'), 'games/') + game.fileName?.split('.')[0]
+
 
             if (!fs.existsSync(output)) {
                 fs.mkdirSync(output, { recursive: true });
                 console.log('Diretório de saída criado:', output);
             }
-
             this.unzipFile(final_name, output)
-            return "Game publicado"
+            const game_image = request.file('game_image', {
+              extnames: ['png', 'jpeg', 'jpg']
+            })
+            if(game_image) {
+              await game_image.move(path.join(Application.publicPath('uploads'), 'game_images', request.body().game_name))
+              const image_file_destination = path.join(Application.publicPath('uploads'), 'game_images', request.body().game_name) + "/" + game_image.clientName;
+              const genre = request.body().genre
+              const finded_genre = await Genre.findBy('id', genre) || new Genre()
+              const finded_user = await User.findBy('id', auth.user?.id) || new User()
+              const game_data = new Game()
+              game_data.name = request.body().game_name
+              game_data.type = body.type
+              game_data.image_path = "http://localhost:3333/uploads/game_images/" + request.body().game_name + "/" + game_image.clientName;
+              game_data.parental_rating = body.parental_rating
+              game_data.description = body.description
+              game_data.client_name = game.clientName;
+              await game_data.related('dev').associate(finded_user)  
+              await game_data.related('genres').attach([finded_genre.id]) 
+              await game_data.save()  
+              return game_data
+            }
+            else {
+              return "Erro, sem imagem"
+            }
         }
+        return false
     }
 
     public async play(ctx: HttpContextContract) {
-        const { params } = ctx;
-        const game_id = params.id;
-        return game_id
+        const { params, view } = ctx;
+        const data:any = Encryption.decrypt(params.id)
+        const game = await Game.findBy('id', data.id)  || new Game()
+        await game.load('genres')
+        const processed_game = game.client_name.replace('.zip', '')
+        const href = "http://localhost:3333/uploads/games/" + processed_game + "/" + processed_game + "/index.html"
+        console.log(href)
+        return view.render("play_game", {
+          id: game.id,
+          name: game.name,
+          href,
+          genre_name: game.genres[0].name,
+          parental_rating: game.parental_rating == "free" ? "Livre" : game.parental_rating + " anos"
+        })
     }
 }
