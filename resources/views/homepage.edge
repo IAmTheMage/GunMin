@@ -15,12 +15,22 @@
         </div>
         <div id="MoreGames">
             @each(game in games)
+            @if(game.download == false)
             <a href="{{game.href}}" class="Card">
                 <div style="background-image: url('{{game.image_url}}');" class="Background-Image"></div>
                 <p class="Title">{{game.name}}</p>
                 <p>{{game.description}}</p>
                 <span>Classificação indicativa: {{game.parental_rating}} Tipo: {{game.type}}</span>
             </a>
+            @end
+            @if(game.download == true)
+            <a target="_blank" href="{{game.href}}" download class="Card">
+                <div style="background-image: url('{{game.image_url}}');" class="Background-Image"></div>
+                <p class="Title">{{game.name}}</p>
+                <p>{{game.description}}</p>
+                <span>Classificação indicativa: {{game.parental_rating}} Tipo: {{game.type}}</span>
+            </a>
+            @end
             @end
         </div>
     </div>

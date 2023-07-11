@@ -71,6 +71,7 @@ CREATE TABLE IF NOT EXISTS "games" (
     description text NOT NULL CHECK(length("description") >= 30),
     banned boolean DEFAULT false,
     parental_rating PARENTAL_RATING DEFAULT 'free',
+	client_name varchar(100) NOT NULL,
     "type" GAME_TYPE DEFAULT 'play_in',
     image_path text,
     dev_id uuid NOT NULL REFERENCES devs(id),
