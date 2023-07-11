@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS "users" (
 	PRIMARY KEY(id)
 );
 
-CREATE TABLE IF NOT EXISTS "biling_address" (
+CREATE TABLE IF NOT EXISTS "billing_address" (
 	id UUID DEFAULT uuid_generate_v4(),
 	"road" varchar(255) NOT NULL,
 	"number" int NOT NULL,
