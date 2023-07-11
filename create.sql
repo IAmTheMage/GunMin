@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS "devs" (
 	"password" text NOT NULL CHECK(length("password") >= 8),
 	reviewRelevance decimal(10, 2) default 2.0,
 	created_updated_at timestamp DEFAULT current_timestamp,
-	biling_address_id UUID NOT NULL REFERENCES biling_address(id),
+	billing_address_id UUID NOT NULL REFERENCES billing_address(id),
 	PRIMARY KEY(id)
 );
 
@@ -93,7 +93,7 @@ CREATE TABLE IF NOT EXISTS  "appeal" (
 	game_id UUID REFERENCES games(id) ON DELETE CASCADE,
 	admin_id UUID REFERENCES admins(id),
 	accepted boolean DEFAULT false,
-	analised boolean DEFAULT false,
+	analyzed boolean DEFAULT false,
 	created_updated_at timestamp DEFAULT current_timestamp,
 	reason text NOT NULL CHECK(length(reason) >= 30),
 	PRIMARY KEY(id)

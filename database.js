@@ -25,7 +25,7 @@ const knex = require('knex') ({
         port: 15432,
         user: 'postgres',
         password: 'Postgres2019!',
-        database: 'test_3'
+        database: 'guarma_5'
     }
 })
 
@@ -132,10 +132,10 @@ async function generateRandomAdmins() {
 }
 
 async function generateRandomBillingAddress() {
-    let bill = await knex('biling_address').select()
+    let bill = await knex('billing_address').select()
     if(bill.length > 0) return 0;
     for(let i = 0; i < size; i++) {
-        await knex('biling_address').insert({
+        await knex('billing_address').insert({
             road: generateRandomString(44),
             number: getRandomInt(0, 1651),
             complement: generateRandomString(32),
@@ -150,16 +150,17 @@ async function generateRandomDevs() {
     
     let devs = await knex('devs').select()
     if(devs.length > 0) return 0;
-    kp = await knex('biling_address').select()
+    kp = await knex('billing_address').select()
     let plans = await knex('plans').select()
     for(let i = 0; i < size; i++) {
+        let rand = Math.random()
         await knex('devs').insert({
           username: generateRandomString(16),
           email: generateRandomString(24) + "@gmail.com",
           password: generateRandomString(18),
           cpf: generateRandomCPF().toString(),
           image_url: generateRandomString(64),
-          biling_address_id: kp[getRandomInt(0, size - 1)].id,
+          billing_address_id: kp[getRandomInt(0, size - 1)].id,
           plan_id: plans[getRandomInt(0, 7)].plan_id
       })
     }
@@ -296,8 +297,8 @@ async function generateRandomBans() {
 
 async function generateRandomAppeals() {
   const bans = await knex('banned_game').select()
-  const Appeals = await knex('Appeal').select()
-  if(Appeals.length > 0) return 0; 
+  const resources = await knex('appeal').select()
+  if(resources.length > 0) return 0; 
   let bans_modeled = []
   for(let i = 0; i < bans.length; i++) {
     bans_modeled.push({index: i, game_id: bans[i].game_id, admin_id: bans[i].admin_id})
@@ -306,7 +307,7 @@ async function generateRandomAppeals() {
   for(let i = 0; i < 3; i++) {
     const selectedBan = bans_modeled[getRandomInt(0, bans_modeled.length - 1)];
     bans_modeled.splice(selectedBan.index, 1)
-    await knex('Appeal').insert({
+    await knex('appeal').insert({
       reason: generateRandomString(getRandomInt(32, 250)),
       game_id: selectedBan.game_id,
       admin_id: selectedBan.admin_id
